@@ -1,0 +1,13 @@
+/* 
+	Position of POI-radar
+	We advise you to use an absolute position for the element which will be referred to the radar container. 
+	Keep in mind: In case the DOM element is updated on the fly via jQuery or responsive design use 'AR.radar.notifyUpdateRadarPosition();'
+	to force radar position/size updates, otherwise the very first position/size will be used.
+*/
+.radarContainer_left {
+	position:absolute;
+	top:0px;
+	left:0px;
+	width:100px;
+	height:100px;
+}
