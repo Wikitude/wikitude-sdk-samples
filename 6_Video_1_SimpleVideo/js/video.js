@@ -27,7 +27,7 @@ var World = {
 		/*
 			Adding the video to the image target is straight forward and similar like adding any other drawable to an image target.
 
-			Note that this time we use "*" as target name. That means that the AR.Trackable2DObject will respond to any target that is defined in the specified tracker. You can use wildcards to specify more complex name matchings. E.g. 'target_?' to reference 'target_1' through 'target_9' or 'target*' for any targets names that start with 'target'.
+			Note that this time we use "*" as target name. That means that the AR.Trackable2DObject will respond to any target that is defined in the target collection. You can use wildcards to specify more complex name matchings. E.g. 'target_?' to reference 'target_1' through 'target_9' or 'target*' for any targets names that start with 'target'.
 
 			To start the video immediately after the target is recognized we call play inside the onEnterFieldOfVision trigger. Supplying -1 to play tells the Wikitude SDK to loop the video infinitely. Choose any positive number to re-play it multiple times.
 		*/
@@ -35,7 +35,7 @@ var World = {
 			drawables: {
 				cam: [video]
 			},
-			onEnterFieldOfVision: function onEnterFieldOfViewFn() {
+			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
 				video.play(-1);
 			}
 		});

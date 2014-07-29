@@ -15,7 +15,7 @@ var World = {
 			First an AR.Tracker needs to be created in order to start the recognition engine. It is initialized with a URL specific to the target collection. Optional parameters are passed as object in the last argument. In this case a callback function for the onLoaded trigger is set. Once the tracker is fully loaded the function loadingStep() is called.
 
 			Important: If you replace the tracker file with your own, make sure to change the target name accordingly.
-			e.g. replace "carAd" used for creating the AR.Trackeable2DOBject below, with the name of one of your new target images.
+			Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
 		*/
 		this.tracker = new AR.Tracker("assets/tracker.wtc", {
 			onLoaded: this.loadingStep
@@ -76,7 +76,7 @@ var World = {
 
 			To add the AR.ImageDrawable to the image target together with the 3D model both drawables are supplied to the AR.Trackable2DObject.
 		*/
-		var trackable = new AR.Trackable2DObject(this.tracker, "carAd", {
+		var trackable = new AR.Trackable2DObject(this.tracker, "*", {
 			drawables: {
 				cam: [this.modelCar, buttonRotate]
 			},

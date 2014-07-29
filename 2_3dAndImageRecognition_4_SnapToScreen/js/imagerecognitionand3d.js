@@ -2,7 +2,10 @@ var World = {
 	loaded: false,
 	rotating: false,
 	snapped: false,
-	lastTouch: {x: 0, y: 0},
+	lastTouch: {
+		x: 0,
+		y: 0
+	},
 	lastScale: 0,
 	currentScale: 0,
 	swipeAllowed: true,
@@ -29,47 +32,15 @@ var World = {
 			Disable all sensors in "IR-only" Worlds to save performance. If the property is set to true, any geo-related components (such as GeoObjects and ActionRanges) are active. If the property is set to false, any geo-related components will not be visible on the screen, and triggers will not fire. Additionally register a function that is executed everytime the device orientation changes.
 		*/
 		AR.context.services.sensors = false;
-
-		window.addEventListener('orientationchange', this.resizeSnapContainer, false);
-		this.resizeSnapContainer();
-
 		this.createOverlays();
 	},
-
-	/*
-		The snap to screen position is defined through a div element with a certain id. Since the size of the div defines the appeareance of the attached drawables (scale) the size of the div is changed based on the device orientation.
-	*/
-	resizeSnapContainer: function resizeSnapContainerFn() {
-		var documentElement = document.documentElement;
-		var aspectRatio = documentElement.clientWidth/documentElement.clientHeight;
-
-		/* Setup the initial portrait layout */
-		var width = 70;
-		var height = 0;
-		var left = 15;
-
-		/* And adopt it for landscape accordingly */
-		if ( aspectRatio > 1 ) {
-			width = 35;
-			left = 32.5;
-		}
-
-		/* After the initial layout is setup the remaining values are calculated accordingly. */
-		height = width * aspectRatio;
-
-		/* Finally the div is updated. Resizing the div will trigger a relayout for all snapped elements */
-		document.getElementById(World.interactionContainer).style.width = width.toString()+"%";
-		document.getElementById(World.interactionContainer).style.height = height.toString()+"%";
-		document.getElementById(World.interactionContainer).style.left = left.toString()+"%";
-	},
-
 
 	createOverlays: function createOverlaysFn() {
 		/*
 			First an AR.Tracker needs to be created in order to start the recognition engine. It is initialized with a URL specific to the target collection. Optional parameters are passed as object in the last argument. In this case a callback function for the onLoaded trigger is set. Once the tracker is fully loaded the function loadingStep() is called.
 
 			Important: If you replace the tracker file with your own, make sure to change the target name accordingly.
-			e.g. replace "carAd" used for creating the AR.Trackeable2DOBject below, with the name of one of your new target images.
+			Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
 		*/
 		this.tracker = new AR.Tracker("assets/tracker.wtc", {
 			onLoaded: this.loadingStep
@@ -136,7 +107,7 @@ var World = {
 
 			To add the AR.ImageDrawable to the image target together with the 3D model both drawables are supplied to the AR.Trackable2DObject.
 		*/
-		this.trackable = new AR.Trackable2DObject(this.tracker, "carAd", {
+		this.trackable = new AR.Trackable2DObject(this.tracker, "*", {
 			drawables: {
 				cam: [this.modelCar, this.buttonRotate, this.buttonSnap]
 			},
@@ -163,11 +134,17 @@ var World = {
 
 		this.handleTouchMove = function handleTouchMoveFn(event) {
 
-			if ( World.swipeAllowed ) {
+			if (World.swipeAllowed) {
 
 				/* Define some local variables to keep track of the new touch location and the movement between the last event and the current one */
-				var touch = {x: event.touches[0].clientX, y: event.touches[0].clientY};
-				var movement = {x: 0, y: 0};
+				var touch = {
+					x: event.touches[0].clientX,
+					y: event.touches[0].clientY
+				};
+				var movement = {
+					x: 0,
+					y: 0
+				};
 
 
 				/* Calculate the touch movement between this event and the last one */
@@ -206,7 +183,11 @@ var World = {
 			var newScale = Math.max(World.modelCar.scale.x + deltaScale, 0);
 
 
-			World.modelCar.scale = {x: newScale, y: newScale, z: newScale};
+			World.modelCar.scale = {
+				x: newScale,
+				y: newScale,
+				z: newScale
+			};
 
 			/* Keep track of the current scale value so that we can calculate the scale delta in the next gesture changed function call */
 			World.lastScale = event.scale;
@@ -259,10 +240,10 @@ var World = {
 
 	appear: function appearFn() {
 		// Resets the properties to the initial values.
-        if ( !World.snapped ) {
-            World.resetModel();
-            World.appearingAnimation.start();
-        }
+		if (!World.snapped) {
+			World.resetModel();
+			World.appearingAnimation.start();
+		}
 	},
 
 	resetModel: function resetModelFn() {
@@ -297,7 +278,7 @@ var World = {
 		World.snapped = !World.snapped;
 		World.trackable.snapToScreen.enabled = World.snapped;
 
-		if ( World.snapped ) {
+		if (World.snapped) {
 
 			World.applyLayout(World.layout.snapped);
 
@@ -323,8 +304,16 @@ var World = {
 		World.buttonSnap.offsetY = -layout.offsetY;
 
 
-		World.modelCar.scale = {x: layout.carScale, y: layout.carScale, z: layout.carScale};
-		World.modelCar.translate = {x: 0.0, y: layout.carTranslateY, z: 0.0};
+		World.modelCar.scale = {
+			x: layout.carScale,
+			y: layout.carScale,
+			z: layout.carScale
+		};
+		World.modelCar.translate = {
+			x: 0.0,
+			y: layout.carTranslateY,
+			z: 0.0
+		};
 
 
 		document.getElementById(World.interactionContainer).style.opacity = layout.opacity.toString();

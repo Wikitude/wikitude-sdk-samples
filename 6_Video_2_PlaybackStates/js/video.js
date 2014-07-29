@@ -79,12 +79,12 @@ var World = {
 			drawables: {
 				cam: [video, playButton]
 			},
-			onEnterFieldOfVision: function onEnterFieldOfViewFn() {
+			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
 				if (video.playing) {
 					video.resume();
 				}
 			},
-			onExitFieldOfVision: function onExitFieldOfView() {
+			onExitFieldOfVision: function onExitFieldOfVisionFn() {
 				if (video.playing) {
 					video.pause();
 				}

@@ -14,9 +14,9 @@ var World = {
 			First an AR.Tracker needs to be created in order to start the recognition engine. It is initialized with a URL specific to the target collection. Optional parameters are passed as object in the last argument. In this case a callback function for the onLoaded trigger is set. Once the tracker is fully loaded the function worldLoaded() is called.
 
 			Important: If you replace the tracker file with your own, make sure to change the target name accordingly.
-			e.g. replace "pageOne" used for creating the AR.Trackeable2DOBject below, with the name of one of your new target images.
+			Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
 
-			Adding multiple targets to a target collection is straightforward. Simply follow the guide at Target Management of our documentation online. Each target in the target collection is identified by its ID. By using this ID, it is possible to create an AR.Trackable2DObject for every target in the target collection.
+			Adding multiple targets to a target collection is straightforward. Simply follow our Target Management Tool documentation. Each target in the target collection is identified by its target name. By using this target name, it is possible to create an AR.Trackable2DObject for every target in the target collection.
 		*/
 		this.tracker = new AR.Tracker("assets/magazine.wtc", {
 			onLoaded: this.worldLoaded
@@ -92,7 +92,7 @@ var World = {
 		});
 
 		/*
-			Similar to the first part, the image resource and the AR.ImageDrawable for the second overlay are created. The AR.Trackable2DObject for the second page uses the same tracker but with a different id.
+			Similar to the first part, the image resource and the AR.ImageDrawable for the second overlay are created. The AR.Trackable2DObject for the second page uses the same tracker but with a different target name.
 		*/
 		var imgTwo = new AR.ImageResource("assets/imageTwo.png");
 		var overlayTwo = new AR.ImageDrawable(imgTwo, 0.5, {
@@ -106,7 +106,7 @@ var World = {
 		});
 
 		/*
-			Similar to the first part, the image resource and the AR.ImageDrawable for the second overlay are created. The AR.Trackable2DObject for the second page uses the same tracker but with a different id.
+			Similar to the first part, the image resource and the AR.ImageDrawable for the second overlay are created. The AR.Trackable2DObject for the second page uses the same tracker but with a different target name and the second overlay.
 		*/
 		var pageTwo = new AR.Trackable2DObject(this.tracker, "pageTwo", {
 			drawables: {
