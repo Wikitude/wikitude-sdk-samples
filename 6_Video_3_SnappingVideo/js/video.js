@@ -5,41 +5,7 @@ var World = {
 	init: function initFn() {
 		/* Disable all sensors in "IR-only" Worlds to save performance. If the property is set to true, any geo-related components (such as GeoObjects and ActionRanges) are active. If the property is set to false, any geo-related components will not be visible on the screen, and triggers will not fire.*/
 		AR.context.services.sensors = false;
-
-		window.addEventListener('orientationchange', this.resizeSnapContainer, false);
-		this.resizeSnapContainer();
-
 		this.createOverlays();
-	},
-
-	/*
-		The snap to screen position is defined through a div element with a certain id. Since the size of the div defines the appeareance of the attached drawables (scale) the size of the div is changed based on the device orientation.
-	*/
-	resizeSnapContainer: function resizeSnapContainerFn() {
-		var documentElement = document.documentElement;
-		var aspectRatio = documentElement.clientWidth/documentElement.clientHeight;
-
-		/* Setup the initial portrait layout */
-		var width = 90;
-		var height = 0;
-		var left = 5;
-		var top = 0;
-
-		/* And adopt it for landscape accordingly */
-		if ( aspectRatio > 1 ) {
-			width = 50;
-			left = 25;
-		}
-
-		/* After the initial layout is setup the remaining values are calculated accordingly. Note: 50 stands for 50% of the screen height. */
-		height = width * aspectRatio;
-		top = 50 - (height * 0.5);
-
-		/* Finally the div is updated. Resizing the div will trigger a relayout for all snapped elements */
-		document.getElementById('snapContainer').style.width = width.toString()+"%";
-		document.getElementById('snapContainer').style.height = height.toString()+"%";
-		document.getElementById('snapContainer').style.left = left.toString()+"%";
-		document.getElementById('snapContainer').style.top = top.toString()+"%";
 	},
 
 	createOverlays: function createOverlaysFn() {
@@ -115,7 +81,7 @@ var World = {
 			drawables: {
 				cam: [this.video, playButton]
 			},
-			onEnterFieldOfVision: function onEnterFieldOfVision() {
+			onEnterFieldOfVision: function onEnterFieldOfVisionFn() {
 				World.pageOne.snapToScreen.enabled = false;
 			},
 			snapToScreen: {
