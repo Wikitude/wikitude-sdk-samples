@@ -118,7 +118,7 @@ IrAndGeo.errorLoading = function() {
 IrAndGeo.initIr = function() {
     // Create the tracker to recognize the shop ad
     var trackerDataSetPath = "assets/ShopAd.wtc";
-    IrAndGeo.tracker = new AR.Tracker(trackerDataSetPath, {
+    IrAndGeo.tracker = new AR.ClientTracker(trackerDataSetPath, {
         onLoaded: IrAndGeo.loadingStepDone,
         onError: IrAndGeo.errorLoading
     });

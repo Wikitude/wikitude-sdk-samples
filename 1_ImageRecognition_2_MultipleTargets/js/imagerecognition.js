@@ -2,23 +2,19 @@ var World = {
 	loaded: false,
 
 	init: function initFn() {
-		/* 
-			Disable all sensors in "IR-only" Worlds to save performance. If the property is set to true, any geo-related components (such as GeoObjects and ActionRanges) are active. If the property is set to false, any geo-related components will not be visible on the screen, and triggers will not fire.
-		*/
-		AR.context.services.sensors = false;
 		this.createOverlays();
 	},
 
 	createOverlays: function createOverlaysFn() {
 		/*
-			First an AR.Tracker needs to be created in order to start the recognition engine. It is initialized with a URL specific to the target collection. Optional parameters are passed as object in the last argument. In this case a callback function for the onLoaded trigger is set. Once the tracker is fully loaded the function worldLoaded() is called.
+			First an AR.ClientTracker needs to be created in order to start the recognition engine. It is initialized with a URL specific to the target collection. Optional parameters are passed as object in the last argument. In this case a callback function for the onLoaded trigger is set. Once the tracker is fully loaded the function worldLoaded() is called.
 
 			Important: If you replace the tracker file with your own, make sure to change the target name accordingly.
 			Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
 
 			Adding multiple targets to a target collection is straightforward. Simply follow our Target Management Tool documentation. Each target in the target collection is identified by its target name. By using this target name, it is possible to create an AR.Trackable2DObject for every target in the target collection.
 		*/
-		this.tracker = new AR.Tracker("assets/magazine.wtc", {
+		this.tracker = new AR.ClientTracker("assets/magazine.wtc", {
 			onLoaded: this.worldLoaded
 		});
 

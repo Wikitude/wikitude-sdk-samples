@@ -2,14 +2,12 @@ var World = {
 	loaded: false,
 
 	init: function initFn() {
-		/* Disable all sensors in "IR-only" Worlds to save performance. If the property is set to true, any geo-related components (such as GeoObjects and ActionRanges) are active. If the property is set to false, any geo-related components will not be visible on the screen, and triggers will not fire.*/
-		AR.context.services.sensors = false;
 		this.createOverlays();
 	},
 
 	createOverlays: function createOverlaysFn() {
-		// Initialize Tracker
-		this.tracker = new AR.Tracker("assets/magazine.wtc", {
+		// Initialize ClientTracker
+		this.tracker = new AR.ClientTracker("assets/magazine.wtc", {
 			onLoaded: this.worldLoaded
 		});
 

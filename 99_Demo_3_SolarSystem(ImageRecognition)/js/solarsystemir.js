@@ -4,9 +4,7 @@ var World = {
     selectedPlanet: null,
 
     init: function initFn() {
-        /* Disable all sensors in "IR-only" Worlds to save performance. If the property is set to true, any geo-related components (such as GeoObjects and ActionRanges) are active. If the property is set to false, any geo-related components will not be visible on the screen, and triggers will not fire.*/
-        AR.context.services.sensors = false;
-        var tracker = new AR.Tracker("assets/SolarSystem.wtc", {
+        var tracker = new AR.ClientTracker("assets/SolarSystem.wtc", {
             onLoaded: this.trackerLoaded,
             onError: this.trackerError
         });
@@ -290,7 +288,7 @@ var World = {
     },
 
     trackerError: function trackerErrorFn() {
-        document.getElementById('loadingMessage').innerHTML = "Tracker loading failed, please reload World.";
+        document.getElementById('loadingMessage').innerHTML = "ClientTracker loading failed, please reload World.";
     },
 
     trackerEnterFov: function trackerEnterFovFn() {

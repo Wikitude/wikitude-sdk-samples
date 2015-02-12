@@ -1,6 +1,4 @@
 var World = {
-	loaded: false,
-
 	init: function initFn() {
 		this.createOverlays();
 	},
@@ -13,7 +11,10 @@ var World = {
 			Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
 		*/
 		this.tracker = new AR.ClientTracker("assets/magazine.wtc", {
-			onLoaded: this.worldLoaded
+			onLoaded: this.worldLoaded,
+			physicalTargetImageHeights: {
+				pageOne:	268
+			}
 		});
 
 		/*
@@ -34,6 +35,16 @@ var World = {
 		var pageOne = new AR.Trackable2DObject(this.tracker, "*", {
 			drawables: {
 				cam: overlayOne
+			},
+			distanceToTarget: {
+				changedThreshold: 1,
+				onDistanceChanged: function(distance) {
+					document.getElementById('distanceDisplay').innerHTML = "Distance from target: " + distance / 10 + " cm";
+					overlayOne.rotation = distance;
+				}
+			},
+			onExitFieldOfVision: function() {
+				document.getElementById('distanceDisplay').innerHTML = "Distance from target: unknown";
 			}
 		});
 	},
@@ -42,7 +53,7 @@ var World = {
 		var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
 		var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
 		document.getElementById('loadingMessage').innerHTML =
-			"<div" + cssDivLeft + ">Scan Target &#35;1 (surfer):</div>" +
+			"<div" + cssDivLeft + ">Scan Target &#35;1 (surfer), then move closer to the target</div>" +
 			"<div" + cssDivRight + "><img src='assets/surfer.png'></img></div>";
 
 		// Remove Scan target message after 10 sec.
