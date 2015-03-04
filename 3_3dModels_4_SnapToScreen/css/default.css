@@ -1,0 +1,40 @@
+.info {
+	font-size: large;
+	position: absolute;
+	width: 100%;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	background-color: #BBBBBB;
+	text-align: center;
+	top: 0;
+	left: 0;
+	opacity: 0.7;
+	display: table;
+}
+
+#snapContainer {
+	width: 50%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -25%;
+	margin-left: -25%;
+	background: #FFFFFF;
+	opacity: .0;
+}
+
+#snapContainer:before {
+	content:"";
+	display: block;
+	padding-top: 100%;
+}
+
+@media (orientation: landscape) {
+	#snapContainer {
+		width: 30%;
+		margin-top: -15%;
+		margin-left: -15%;
+		background: #FFFFFF;
+		opacity: .0;
+	}   
+}
