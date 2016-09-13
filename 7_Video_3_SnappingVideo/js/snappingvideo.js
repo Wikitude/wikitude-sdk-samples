@@ -17,6 +17,7 @@ var World = {
 		var playButton = new AR.ImageDrawable(playButtonImg, 0.3, {
 			enabled: false,
 			clicked: false,
+			zOrder: 2,
 			onClick: function playButtonClicked() {
 				World.video.play(1);
 				World.video.playing = true;
@@ -40,6 +41,7 @@ var World = {
 		*/
 		this.video = new AR.VideoDrawable("assets/video.mp4", 0.4, {
 			offsetY: playButton.offsetY,
+			zOrder: 1,
 			onLoaded: function videoLoaded() {
 				playButton.enabled = true;
 			},

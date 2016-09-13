@@ -1,6 +1,6 @@
 // information about server communication. This sample webservice is provided by Wikitude and returns random dummy places near given location
 var ServerInformation = {
-	POIDATA_SERVER: "http://example.wikitude.com/GetSamplePois/",
+	POIDATA_SERVER: "https://example.wikitude.com/GetSamplePois/",
 	POIDATA_SERVER_ARG_LAT: "lat",
 	POIDATA_SERVER_ARG_LON: "lon",
 	POIDATA_SERVER_ARG_NR_POIS: "nrPois"
@@ -243,8 +243,8 @@ var World = {
 	},
 
 	/*
-		You may need to reload POI information because of user movements or manually for various reasons. 
-		In this example POIs are reloaded when user presses the refresh button. 
+		You may need to reload POI information because of user movements or manually for various reasons.
+		In this example POIs are reloaded when user presses the refresh button.
 		The button is defined in index.html and calls World.reloadPlaces() on click.
 	*/
 
@@ -275,8 +275,8 @@ var World = {
 				World.loadPoisFromJsonData(data);
 			})
 			.error(function(err) {
-			/*
-					Under certain circumstances your web service may not be available or other connection issues can occur. 
+				/*
+					Under certain circumstances your web service may not be available or other connection issues can occur.
 					To notify the user about connection problems a status message is updated.
 					In your own implementation you may e.g. use an info popup or similar.
 				*/

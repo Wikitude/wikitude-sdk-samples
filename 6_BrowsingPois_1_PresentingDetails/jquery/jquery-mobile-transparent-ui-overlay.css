@@ -29,3 +29,8 @@
 	background-color: lightgrey;
 	background-image:none;
 }
+
+/* fixes focus scrolling */
+.ui-mobile .ui-page-active {
+	overflow: hidden;
+}

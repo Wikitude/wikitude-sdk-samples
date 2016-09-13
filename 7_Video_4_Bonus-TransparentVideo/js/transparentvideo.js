@@ -55,7 +55,7 @@ var World = {
 
 		// Create a button which opens a website in a browser window after a click
 		this.imgButton = new AR.ImageResource("assets/wwwButton.jpg");
-		var pageOneButton = this.createWwwButton("http://n1sco.com/specifications/", 0.1, {
+		var pageOneButton = this.createWwwButton("https://www.blue-tomato.com/en-US/products/?q=sup", 0.1, {
 			offsetX: -0.05,
 			offsetY: 0.2,
 			zOrder: 1

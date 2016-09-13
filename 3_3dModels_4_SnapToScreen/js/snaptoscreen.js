@@ -322,9 +322,6 @@ var World = {
 			y: layout.carTranslateY,
 			z: 0.0
 		};
-
-
-		document.getElementById(World.interactionContainer).style.opacity = layout.opacity.toString();
 	},
 
 	/*
