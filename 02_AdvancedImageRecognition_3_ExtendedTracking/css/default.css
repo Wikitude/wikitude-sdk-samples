@@ -1,0 +1,54 @@
+.info {
+    font-size: large;
+    position: absolute;
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #BBBBBB;
+    text-align: center;
+    top: 0;
+    left: 0;
+    opacity: 0.7;
+    display: table;
+}
+
+.info .text {
+    color: black;
+}
+
+.info .image {
+    width: 80px;
+}
+
+@keyframes rotateIt {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.quality_indicator {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation-name: rotateIt;
+    animation-duration: 4s; /* 3 seconds */
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.trackingGood {
+    background-image: -moz-radial-gradient(5px 5px 5deg, circle cover, lightgreen 0%, green 100%, darkgreen 95%);
+    background-image: -webkit-radial-gradient(5px 5px, circle cover, lightgreen, green);
+    background-image: radial-gradient(5px 5px 5deg, circle cover, lightgreen 0%, green 100%, darkgreen 95%);
+}
+
+.trackingMedium {
+    background-image: -moz-radial-gradient(5px 5px 5deg, circle cover, yellow 0%, orange 100%, red 95%);
+    background-image: -webkit-radial-gradient(5px 5px, circle cover, yellow, orange);
+    background-image: radial-gradient(5px 5px 5deg, circle cover, yellow 0%, orange 100%, red 95%);
+}
+
+.trackingBad {
+    background-image: -moz-radial-gradient(5px 5px 5deg, circle cover, darkred 0%, red 100%, red 95%);
+    background-image: -webkit-radial-gradient(5px 5px, circle cover, darkred, red);
+    background-image: radial-gradient(5px 5px 5deg, circle cover, darkred 0%, red 100%, red 95%);
+}

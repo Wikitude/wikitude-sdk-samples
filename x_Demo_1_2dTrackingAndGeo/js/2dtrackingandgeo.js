@@ -8,6 +8,7 @@ IrAndGeo.stores = [];
 IrAndGeo.markerAnimations = [];
 IrAndGeo.error = false;
 IrAndGeo.receivedLocation = false;
+IrAndGeo.resourcesLoaded = false;
 
 IrAndGeo.res = {};
 
@@ -29,14 +30,20 @@ IrAndGeo.createMarker = function(lat, lon, name) {
 
     // create an AR.ImageDrawable for the marker
     var imageDrawable = new AR.ImageDrawable(IrAndGeo.res.marker, 2, {
-        scale: 0.0,
+        scale: {
+            x: 0.0,
+            y: 0.0
+        },
         onClick: function() {
             alert("clicked");
         }
     });
 
     // create marker animations and store it in the markerAnimations-array 
-    IrAndGeo.markerAnimations.push(new AR.PropertyAnimation(imageDrawable, 'scale', 0.0, 1.0, 1000, {
+    IrAndGeo.markerAnimations.push(new AR.PropertyAnimation(imageDrawable, 'scale.x', 0.0, 1.0, 1000, {
+        type: AR.CONST.EASING_CURVE_TYPE.EASE_OUT_BOUNCE
+    }));
+    IrAndGeo.markerAnimations.push(new AR.PropertyAnimation(imageDrawable, 'scale.y', 0.0, 1.0, 1000, {
         type: AR.CONST.EASING_CURVE_TYPE.EASE_OUT_BOUNCE
     }));
     // create a AR.GeoObject with the marker, disable it by setting the enabled-flag to 'false' and store it in the stores-array
@@ -90,11 +97,11 @@ IrAndGeo.hideDeal = function() {
 IrAndGeo.showWeb = function() {
     IrAndGeo.hideStores();
 
-    AR.context.openInBrowser("https://www.wikitude.com/products/wikitude-sdk/");
+    AR.context.openInBrowser("https://www.wikitude.com");
 };
 
 IrAndGeo.loadingStepDone = function() {
-    if (!IrAndGeo.error && IrAndGeo.res.buttonStores.isLoaded() && IrAndGeo.res.buttonWeb.isLoaded() && IrAndGeo.res.buttonDeal.isLoaded() && IrAndGeo.res.marker.isLoaded() && IrAndGeo.receivedLocation && IrAndGeo.tracker && IrAndGeo.tracker.isLoaded()) {
+    if (!IrAndGeo.error && IrAndGeo.res.buttonStores.isLoaded() && IrAndGeo.res.buttonWeb.isLoaded() && IrAndGeo.res.buttonDeal.isLoaded() && IrAndGeo.res.marker.isLoaded() && IrAndGeo.receivedLocation && IrAndGeo.tracker && IrAndGeo.resourcesLoaded) {
         //everything is loaded
         var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
         var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
@@ -116,28 +123,40 @@ IrAndGeo.errorLoading = function() {
 };
 
 IrAndGeo.initIr = function() {
-    // Create the tracker to recognize the shop ad
-    var trackerDataSetPath = "assets/ShopAd.wtc";
-    IrAndGeo.tracker = new AR.ClientTracker(trackerDataSetPath, {
-        onLoaded: IrAndGeo.loadingStepDone,
+
+    this.targetCollectionResource = new AR.TargetCollectionResource("assets/ShopAd.wtc", {
+        onLoaded: function () {
+            IrAndGeo.resourcesLoaded = true;
+            IrAndGeo.loadingStepDone;
+        }
+    });
+
+    this.tracker = new AR.ImageTracker(this.targetCollectionResource, {
+        onTargetsLoaded: IrAndGeo.loadingStepDone,
         onError: IrAndGeo.errorLoading
     });
 
     // Create drawables to display on the recognized image
     var buttonDeal = new AR.ImageDrawable(IrAndGeo.res.buttonDeal, 0.15, {
         onClick: IrAndGeo.showDeal,
-        offsetX: 0.35,
-        offsetY: -0.275
+        translate: {
+            x: 0.35,
+            y: -0.275
+        }
     });
     var buttonWeb = new AR.ImageDrawable(IrAndGeo.res.buttonWeb, 0.15, {
         onClick: IrAndGeo.showWeb,
-        offsetX: 0.175,
-        offsetY: -0.525
+        translate: {
+            x: 0.175,
+            y: -0.525
+        }
     });
     var buttonStores = new AR.ImageDrawable(IrAndGeo.res.buttonStores, 0.15, {
         onClick: IrAndGeo.showStores,
-        offsetX: -0.1,
-        offsetY: -0.275
+        translate: {
+            x: -0.1,
+            y: -0.275
+        }
     });
 
     IrAndGeo.menuDrawables = [buttonDeal, buttonWeb, buttonStores];
@@ -147,7 +166,7 @@ IrAndGeo.initIr = function() {
     });
 
     // Create the object by defining the tracker, target name and its drawables
-    var trackable2DObject = new AR.Trackable2DObject(IrAndGeo.tracker, "ShopAd", {
+    var imageTrackable = new AR.ImageTrackable(IrAndGeo.tracker, "ShopAd", {
         drawables: {
             cam: [buttonDeal, buttonWeb, buttonStores, IrAndGeo.dealDrawable]
         }

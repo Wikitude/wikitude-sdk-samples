@@ -44,6 +44,7 @@ td {
 	color: #CCCCCC;
 	text-align: left;
 	border: none;
+	font-size: 14pt;
 }
 
 tr {
@@ -58,6 +59,7 @@ tr {
 	text-align: center;
 	text-transform: uppercase;
 	border-radius: 10px 10px 10px 10px;
+	font-size: 24pt;
 }
 
 #info {

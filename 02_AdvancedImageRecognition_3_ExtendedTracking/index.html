@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+        <title>Extended Tracking Sample</title>
+
+        <!-- required to use AR namespace. Note: architect.js will not be loaded from this url but injected via SDK's AR-View -->
+        <script src="https://www.wikitude.com/libs/architect.js"></script>
+
+        <!-- Default syle, used to layout info box -->
+        <link rel="stylesheet" href="css/default.css">
+
+        <!-- contains information how to interpret sensor values, e.g. color scheme and group information -->
+        <script src="js/meta.js"></script>
+
+        <base href="">
+
+    </head>
+    <body>
+        <div class="info" id="infoBox">
+            <div class="text">Scan Target: IOT</div>
+            <img class="image" src='assets/target_iot.jpg'/>
+        </div>
+        <div id="trackingIndicator" class="quality_indicator"></div>
+        <script src="js/extendedtracking.js"></script>
+    </body>
+</html>

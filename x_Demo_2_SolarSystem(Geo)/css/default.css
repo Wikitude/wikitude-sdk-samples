@@ -30,6 +30,7 @@ td {
 	color: #CCCCCC;
 	text-align: left;
 	border: none;
+    font-size: 14pt;
 }
 
 tr {
@@ -37,6 +38,7 @@ tr {
 }
 
 .tableheader {
+    font-size: 24pt;
 	font-weight: bold;
 	background-color: #FF9C4F;
 	color: rgb(34,34,34);

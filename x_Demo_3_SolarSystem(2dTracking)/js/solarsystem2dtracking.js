@@ -4,8 +4,11 @@ var World = {
     selectedPlanet: null,
 
     init: function initFn() {
-        var tracker = new AR.ClientTracker("assets/SolarSystem.wtc", {
-            onLoaded: this.trackerLoaded,
+        this.targetCollectionResource = new AR.TargetCollectionResource("assets/SolarSystem.wtc", {
+        });
+
+        this.tracker = new AR.ImageTracker(this.targetCollectionResource, {
+            onTargetsLoaded: this.trackerLoaded,
             onError: this.trackerError
         });
 
@@ -156,7 +159,7 @@ var World = {
         var backdropImg = new AR.ImageResource("assets/backdrop.png");
         var backdrop = [new AR.ImageDrawable(backdropImg, 2)];
 
-        var overlay = new AR.Trackable2DObject(tracker, "solarsystem", {
+        var overlay = new AR.ImageTrackable(this.tracker, "solarsystem", {
             drawables: {
                 cam: backdrop.concat(planets)
             },

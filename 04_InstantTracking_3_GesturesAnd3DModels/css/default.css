@@ -1,0 +1,61 @@
+body {
+	margin: 0;
+}
+
+.tracking-model-button {
+    width: 14%;
+    max-width: 100px;
+    opacity: 1.0;
+}
+
+.tracking-model-button-inactive {
+    width: 14%;
+    max-width: 100px;
+    opacity: 0.1;
+}
+
+#tracking-model-reset-button-container input {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-right: 5px;
+    padding-top: 5px;
+    width: 14%;
+    max-width: 100px;
+}
+
+#tracking-controls-container-lower {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#tracking-controls-container-lower-spacing {
+    display: inline-block;
+    width: 2%;
+    max-width: 20px;
+}
+
+#tracking-model-button-container {
+    display: inline-block;
+}
+
+#tracking-start-stop-button {
+    display: inline-block;
+    width: 14%;
+    max-width: 100px;
+}
+
+#tracking-height-slider-container {
+    text-align: left;
+}
+
+#tracking-height-slider-container-inner {
+    display: inline-block;
+    width: 75%;
+    max-width: 350px;
+    padding-left: 10px;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" name="viewport">
+        
+        <!-- disables pinch-scaling of the webview, so that gestures only do what they're supposed to -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <title></title>
+
+        <script src="https://www.wikitude.com/libs/architect.js"></script>
+        <script type="text/javascript" src="../ade.js"></script>
+
+        <link rel="stylesheet" href="css/default.css">
+
+        <!-- jquery mobile CSS -->
+        <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css" />
+        <!-- required to set background transparent & enable "click through" -->
+        <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css" />
+
+        <!-- jquery JS files -->
+        <script type="text/javascript" src="jquery/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="jquery/jquery.mobile-1.3.2.min.js"></script>
+    </head>
+
+    <body>
+        <div data-role="page" id="page1" style="background: none;">
+            
+            <div id="tracking-model-reset-button-container">
+                <input id="tracking-model-reset-button" type="image" src="assets/buttons/trash.png" onclick="World.resetModels()">
+            </div>
+            
+            <div id="tracking-controls-container-lower">
+                <input id="tracking-start-stop-button" type="image" src="assets/buttons/start.png" onclick="World.changeTrackerState()"/>
+            </div>
+            
+            <div id="tracking-height-slider-container">
+                <div id="tracking-height-slider-container-inner">
+                    <input id="tracking-height-slider" type="range" min="0.1" value="1.0" max="2.0" step="0.1" onchange="World.changeTrackingHeight(value)">
+                </div>
+            </div>
+            
+        </div>
+
+        <script src="js/3dmodelsinstanttracking.js"></script>
+    </body>
+</html>

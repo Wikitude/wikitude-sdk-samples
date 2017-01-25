@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+}
+
+#tracking-controls-container-lower {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#tracking-start-stop-button {
+    display: inline-block;
+    width: 14%;
+    max-width: 100px;
+}
+
+#tracking-height-slider-container {
+    text-align: center;
+}
+
+#tracking-height-slider-container-inner {
+    display: inline-block;
+    width: 75%;
+    max-width: 350px;
+    padding-left: 10px;
+}
