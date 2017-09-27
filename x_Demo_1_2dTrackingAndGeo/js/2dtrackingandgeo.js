@@ -128,12 +128,18 @@ IrAndGeo.initIr = function() {
         onLoaded: function () {
             IrAndGeo.resourcesLoaded = true;
             IrAndGeo.loadingStepDone;
+        },
+        onError: function(errorMessage) {
+            alert(errorMessage);
         }
     });
 
     this.tracker = new AR.ImageTracker(this.targetCollectionResource, {
         onTargetsLoaded: IrAndGeo.loadingStepDone,
-        onError: IrAndGeo.errorLoading
+        onError: IrAndGeo.errorLoading,
+        onError: function(errorMessage) {
+            alert(errorMessage);
+        }
     });
 
     // Create drawables to display on the recognized image
@@ -169,6 +175,9 @@ IrAndGeo.initIr = function() {
     var imageTrackable = new AR.ImageTrackable(IrAndGeo.tracker, "ShopAd", {
         drawables: {
             cam: [buttonDeal, buttonWeb, buttonStores, IrAndGeo.dealDrawable]
+        },
+        onError: function(errorMessage) {
+            alert(errorMessage);
         }
     });
 

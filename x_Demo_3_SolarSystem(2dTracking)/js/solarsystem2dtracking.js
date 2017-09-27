@@ -1,10 +1,14 @@
 var World = {
+    loaded: false,
     planetsInfo: null,
     rotating: false,
     selectedPlanet: null,
 
     init: function initFn() {
         this.targetCollectionResource = new AR.TargetCollectionResource("assets/SolarSystem.wtc", {
+            onError: function(errorMessage) {
+                alert(errorMessage);
+            }
         });
 
         this.tracker = new AR.ImageTracker(this.targetCollectionResource, {
@@ -163,8 +167,11 @@ var World = {
             drawables: {
                 cam: backdrop.concat(planets)
             },
-            onEnterFieldOfVision: this.trackerEnterFov,
-            onExitFieldOfVision: this.trackerExitFov
+            onImageRecognized: this.trackerEnterFov,
+            onImageLost: this.trackerExitFov,
+            onError: function(errorMessage) {
+                alert(errorMessage);
+            }
         });
 
         AR.context.onScreenClick = this.screenClick;
@@ -276,18 +283,20 @@ var World = {
         return true;
     },
 
+    removeLoadingBar: function() {
+        if (!World.loaded) {
+            var e = document.getElementById('loadingMessage');
+            e.parentElement.removeChild(e);
+            World.loaded = true;
+        }
+    },
+
     trackerLoaded: function trackerLoadedFn() {
         var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
         var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
         document.getElementById('loadingMessage').innerHTML =
             "<div" + cssDivLeft + ">Scan Solar System Image:</div>" +
             "<div" + cssDivRight + "><img src='assets/solarsystem.png'></img></div>";
-
-        // Remove Scan target message after 10 sec.
-        setTimeout(function() {
-            var e = document.getElementById('loadingMessage');
-            e.parentElement.removeChild(e);
-        }, 10000);
     },
 
     trackerError: function trackerErrorFn() {
@@ -295,6 +304,7 @@ var World = {
     },
 
     trackerEnterFov: function trackerEnterFovFn() {
+        World.removeLoadingBar();
         document.getElementById('toggleAnimationBtn').style.display = "block";
         if (World.selectedPlanet !== null) {
             document.getElementById("info").setAttribute("class", "infoVisible");
