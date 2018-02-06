@@ -39,24 +39,33 @@ var World = {
 		});
 
 		/*
-			The last line combines everything by creating an AR.ImageResource with the previously created tracker, the name of the image target and the drawable that should augment the recognized image.
-			Please note that in this case the target name is a wildcard. Wildcards can be used to respond to any target defined in the target collection. If you want to respond to a certain target only for a particular AR.ImageResource simply provide the target name as specified in the target collection.
+			The last line combines everything by creating an AR.ImageTrackable with the previously created tracker, the name of the image target and the drawable that should augment the recognized image.
+			Please note that in this case the target name is a wildcard. Wildcards can be used to respond to any target defined in the target collection. If you want to respond to a certain target only for a particular AR.ImageTrackable simply provide the target name as specified in the target collection.
 		*/
-		var pageOne = new AR.ImageResource(this.tracker, "*", {
+		var pageOne = new AR.ImageTrackable(this.tracker, "*", {
 			drawables: {
 				cam: overlayOne
 			},
+			onImageRecognized: this.removeLoadingBar,
             onError: function(errorMessage) {
             	alert(errorMessage);
             }
 		});
 	},
 
+	removeLoadingBar: function() {
+		if (!World.loaded) {
+				var e = document.getElementById('loadingMessage');
+				e.parentElement.removeChild(e);
+				World.loaded = true;
+		}
+	},
+
 	worldLoaded: function worldLoadedFn() {
 		var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
 		var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
 		document.getElementById('loadingMessage').innerHTML =
-			"<div" + cssDivLeft + ">Scan Target &#35;1 (surfer):</div>" +
+			"<div" + cssDivLeft + ">Scan Target &#35;1 (surfer) or faces</div>" +
 			"<div" + cssDivRight + "><img src='assets/surfer.png'></img></div>";
 	}
 };

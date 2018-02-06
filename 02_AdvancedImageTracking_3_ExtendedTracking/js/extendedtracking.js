@@ -61,6 +61,8 @@ var World = {
 
     camDrawables : [],
 
+    loaded : false,
+
     /**
      * launches the experience
      */
@@ -319,8 +321,11 @@ var World = {
 
     // hides infobox
     hideInfoBox: function() {
-        var e = document.getElementById('infoBox');
-        e.parentElement.removeChild(e);
+        if (!World.loaded) {
+            var e = document.getElementById('infoBox');
+            e.parentElement.removeChild(e);
+            World.loaded = true;
+        }
     }
 };
 

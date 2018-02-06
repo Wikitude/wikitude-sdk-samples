@@ -47,7 +47,7 @@
 	}
 
 	#overlayPicker a {
-		width: 90%;
+		width: 95%;
 		right: 0.5%;
 	}
 
@@ -59,7 +59,7 @@
 @media screen and (orientation: landscape) {
 
 	#overlayPicker {
-		width: 55%;
+		width: 60%;
 		text-align: right;
 		position: absolute;
 		right: 0.5%;

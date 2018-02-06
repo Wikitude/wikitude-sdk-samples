@@ -39,7 +39,15 @@ var World = {
                 //cam: myImageDrawable
             }
         });
-    }
+    },
+
+    loadingStep: function loadingStepFn() {
+  			var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
+  			var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
+  			document.getElementById('loadingMessage').innerHTML =
+  				"<div" + cssDivLeft + ">Scan ArUco Marker target:</div>" +
+  				"<div" + cssDivRight + "><img src='assets/aruco_marker.png'></img></div>";
+  	}
 };
 
 World.init();

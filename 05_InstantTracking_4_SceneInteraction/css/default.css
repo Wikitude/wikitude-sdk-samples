@@ -1,27 +1,19 @@
 body {
-	margin: 0;
+    margin: 0;
 }
 
-.tracking-model-button {
-    width: 14%;
-    max-width: 100px;
-    opacity: 1.0;
-}
-
-.tracking-model-button-inactive {
-    width: 14%;
-    max-width: 100px;
-    opacity: 0.1;
-}
-
-#tracking-model-reset-button-container input {
+#page1 {
     position: absolute;
     right: 0;
     top: 0;
-    padding-right: 5px;
-    padding-top: 5px;
-    width: 14%;
-    max-width: 100px;
+    left: 0;
+    bottom: 0;
+    min-height: 0 !important;
+}
+
+#tracking-height-slider-container {
+    max-width: 500px;
+    width: 85%;
 }
 
 #tracking-controls-container-lower {
@@ -39,23 +31,70 @@ body {
     max-width: 20px;
 }
 
-#tracking-model-button-container {
-    display: inline-block;
+.slider-delete-container {
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
-#tracking-start-stop-button {
-    display: inline-block;
+#top-wrapper {
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.info {
+    font-size: medium;
+    width: 100%;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background-color: #BBBBBB;
+    text-align: center;
+    opacity: 0.7;
+    display: table;
+}
+
+.image-button {
     width: 14%;
-    max-width: 100px;
 }
 
-#tracking-height-slider-container {
-    text-align: left;
+.image-button-inactive {
+    opacity: 0.1;
 }
 
-#tracking-height-slider-container-inner {
-    display: inline-block;
-    width: 75%;
-    max-width: 350px;
-    padding-left: 10px;
+@media only screen
+and (min-device-width: 640px)
+and (orientation: portrait) {
+    .image-button {
+        max-width: 100px;
+        max-height: 100px;
+    }
+}
+@media only screen
+and (min-device-width: 720px)
+and (orientation: landscape) {
+    .image-button {
+        max-width: 100px;
+        max-height: 100px;
+    }
+}
+
+@media only screen
+and (max-device-width: 640px)
+and (orientation: portrait) {
+    .image-button {
+        max-width: 50px;
+        max-height: 50px;
+    }
+}
+
+@media only screen
+and (max-device-width: 720px)
+and (orientation: landscape) {
+    .image-button {
+        max-width: 50px;
+        max-height: 50px;
+    }
 }

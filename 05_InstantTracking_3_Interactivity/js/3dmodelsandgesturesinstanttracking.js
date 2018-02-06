@@ -13,7 +13,7 @@ var oneFingerGestureAllowed = false;
 // intuitive experience
 AR.context.on2FingerGestureStarted = function() {
     oneFingerGestureAllowed = false;
-}
+};
 
 var World = {
     modelPaths: ["assets/models/clock.wt3", "assets/models/couch.wt3", "assets/models/officechair.wt3", "assets/models/table.wt3", "assets/models/trainer.wt3"],
@@ -27,30 +27,63 @@ var World = {
     lastAddedModel: null,
 
     init: function initFn() {
+        var message;
+        if (AR.hardware.smart.platformAssistedTrackingSupported) {
+            message = "Running with platform assisted tracking(ARKit or ARCore). <br> Move your phone around until the crosshair turns green, which is when you can start tracking."
+        } else {
+            message = "Running without platform assisted tracking (ARKit or ARCore)."
+        }
+
+        this.showUserInstructions(message);
         this.createOverlays();
     },
 
     createOverlays: function createOverlaysFn() {
         var crossHairsRedImage = new AR.ImageResource("assets/crosshairs_red.png");
-        var crossHairsRedDrawable = new AR.ImageDrawable(crossHairsRedImage, 1.0);
+        this.crossHairsRedDrawable = new AR.ImageDrawable(crossHairsRedImage, 1.0);
 
         var crossHairsBlueImage = new AR.ImageResource("assets/crosshairs_blue.png");
-        var crossHairsBlueDrawable = new AR.ImageDrawable(crossHairsBlueImage, 1.0);
+        this.crossHairsBlueDrawable = new AR.ImageDrawable(crossHairsBlueImage, 1.0);
+
+        var crossHairsGreenImage = new AR.ImageResource("assets/crosshairs_green.png");
+        this.crossHairsGreenDrawable = new AR.ImageDrawable(crossHairsGreenImage, 1.0);
 
         this.tracker = new AR.InstantTracker({
             onChangedState:  function onChangedStateFn(state) {
-                // react to a change in tracking state here
+                var els = [].slice.apply(document.getElementsByClassName("model-button"));
+                if (state === AR.InstantTrackerState.INITIALIZING) {
+                    els.forEach(function (element) {
+                        element.classList.add("image-button-inactive");
+                    });
+
+                    document.getElementById("tracking-start-stop-button").src = "assets/buttons/start.png";
+                    document.getElementById("tracking-height-slider-container").style.visibility = "visible";
+                } else {
+                    if (AR.hardware.smart.platformAssistedTrackingSupported) {
+                        World.showUserInstructions("Running with platform assisted tracking(ARKit or ARCore).");
+                    }
+
+                    els.forEach(function (element) {
+                        element.classList.remove("image-button-inactive");
+                    });
+
+                    document.getElementById("tracking-start-stop-button").src = "assets/buttons/stop.png";
+                    document.getElementById("tracking-height-slider-container").style.visibility = "hidden";
+                }
             },
             deviceHeight: 1.0,
             onError: function(errorMessage) {
                 alert(errorMessage);
+            },
+            onChangeStateError: function(e) {
+                alert("" + e.id + " " + e.message);
             }
         });
-        
+
         this.instantTrackable = new AR.InstantTrackable(this.tracker, {
             drawables: {
-                cam: crossHairsBlueDrawable,
-                initialization: crossHairsRedDrawable
+                cam: World.crossHairsBlueDrawable,
+                initialization: World.crossHairsRedDrawable
             },
             onTrackingStarted: function onTrackingStartedFn() {
                 // do something when tracking is started (recognized)
@@ -76,6 +109,17 @@ var World = {
                 alert(errorMessage);
             }
         });
+
+        setInterval(
+            function() {
+                if (World.tracker.canStartTracking) {
+                    World.instantTrackable.drawables.initialization = [World.crossHairsGreenDrawable];
+                } else {
+                    World.instantTrackable.drawables.initialization = [World.crossHairsRedDrawable];
+                }
+            },
+            1000
+        );
 
         World.setupEventListeners()
     },
@@ -111,38 +155,18 @@ var World = {
     },
 
     changeTrackerState: function changeTrackerStateFn() {
-        
+
         if (this.tracker.state === AR.InstantTrackerState.INITIALIZING) {
-            
-            var els = [].slice.apply(document.getElementsByClassName("tracking-model-button-inactive"));
-            for (var i = 0; i < els.length; i++) {
-                console.log(els[i]);
-                els[i].className = els[i].className = "tracking-model-button";
-            }
-            
-            document.getElementById("tracking-start-stop-button").src = "assets/buttons/stop.png";
-            document.getElementById("tracking-height-slider-container").style.visibility = "hidden";
-            
             this.tracker.state = AR.InstantTrackerState.TRACKING;
         } else {
-            
-            var els = [].slice.apply(document.getElementsByClassName("tracking-model-button"));
-            for (var i = 0; i < els.length; i++) {
-                console.log(els[i]);
-                els[i].className = els[i].className = "tracking-model-button-inactive";
-            }
-            
-            document.getElementById("tracking-start-stop-button").src = "assets/buttons/start.png";
-            document.getElementById("tracking-height-slider-container").style.visibility = "visible";
-            
             this.tracker.state = AR.InstantTrackerState.INITIALIZING;
         }
     },
-    
+
     changeTrackingHeight: function changeTrackingHeightFn(height) {
         this.tracker.deviceHeight = parseFloat(height);
     },
-    
+
     addModel: function addModelFn(pathIndex, xpos, ypos) {
         if (World.isTracking()) {
             var modelIndex = rotationValues.length;
@@ -170,7 +194,7 @@ var World = {
                         // We recommend setting the entire translate property rather than
                         // its individual components as the latter would cause several
                         // call to native, which can potentially lead to performance
-                        // issues on older devices. The same applied to the rotate and 
+                        // issues on older devices. The same applied to the rotate and
                         // scale property
                         this.translate = {x:intersectionX, y:intersectionY};
                     }
@@ -197,7 +221,7 @@ var World = {
                 onScaleEnded: function(scale) {
                     scaleValues[modelIndex] = this.scale.x;
                 }
-            })
+            });
 
             allCurrentModels.push(model);
             lastAddedModel = model;
@@ -225,6 +249,11 @@ var World = {
     resetAllModelValues: function resetAllModelValuesFn() {
         rotationValues = [];
         scaleValues = [];
+    },
+
+    showUserInstructions: function showUserInstructionsFn(message) {
+        document.getElementById('loadingMessage').innerHTML =
+            "<div style='display: table-cell; text-align: center; width: 100%;'>" + message + "</div>";
     }
 };
 
