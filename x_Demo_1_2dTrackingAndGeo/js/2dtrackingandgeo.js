@@ -2,6 +2,7 @@
     The Wikitude SDK allows you to combine geobased AR with image recognition to create a seamless experience for users.
 */
 IrAndGeo = {};
+//Please GO Update
 
 IrAndGeo.markerNames = ['Union Circle', 'Eastminster', 'Small Ben', 'Silver Gate', 'Uptown', 'Downtown', 'Countryside', 'Outer Circle'];
 IrAndGeo.stores = [];
@@ -39,7 +40,7 @@ IrAndGeo.createMarker = function(lat, lon, name) {
         }
     });
 
-    // create marker animations and store it in the markerAnimations-array 
+    // create marker animations and store it in the markerAnimations-array
     IrAndGeo.markerAnimations.push(new AR.PropertyAnimation(imageDrawable, 'scale.x', 0.0, 1.0, 1000, {
         type: AR.CONST.EASING_CURVE_TYPE.EASE_OUT_BOUNCE
     }));
@@ -183,7 +184,7 @@ IrAndGeo.initIr = function() {
 
 };
 
-// this function is called as soon as we receive GPS data 
+// this function is called as soon as we receive GPS data
 AR.context.onLocationChanged = function(latitude, longitude, altitude, accuracy) {
     // in order not to receive any further location updates the onLocationChanged trigger is set to null
     AR.context.onLocationChanged = null;
