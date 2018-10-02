@@ -1,7 +1,18 @@
 var World = {
     loaded: false,
-    occluderCenterZ: -0.12,
     drawables: [],
+    firetruckRotation: {
+        x: 0,
+        y: 0,
+        z: 0
+    },
+    firetruckCenter: {
+        x: 0,
+        y: -0.14,
+        z: 0
+    },
+    firetruckLength: 0.5,
+    firetruckHeight: 0.28,
 
     init: function initFn() {
         World.createOccluder();
@@ -10,44 +21,42 @@ var World = {
     },
 
     createOccluder: function createOccluderFn() {
-        var occluderScale = 0.0057;
+        var occluderScale = 0.0045 * this.firetruckLength;
 
         this.firetruckOccluder = new AR.Occluder("assets/firetruck_occluder.wt3", {
-            onLoaded: this.loadingStep,
+            onLoaded: World.showInfoBar,
             scale: {
                 x: occluderScale,
                 y: occluderScale,
                 z: occluderScale
             },
-            translate: {
-                x: -0.25,
-                z: -0.3
-            },
+            translate: this.firetruckCenter,
             rotate: {
                 x: 180
-            }
+            },
+            onError: World.onError
         });
         World.drawables.push(this.firetruckOccluder);
     },
 
     createCones: function createConesFn() {
-        var coneDistance = 1.0;
+        var coneDistance = this.firetruckLength * 0.8;
 
-        var frontLeftCone = World.getCone(-coneDistance, 0.0, World.occluderCenterZ + coneDistance);
+        var frontLeftCone = World.getCone(-coneDistance, +coneDistance);
         World.drawables.push(frontLeftCone);
 
-        var backLeftCone = World.getCone( coneDistance, 0.0, World.occluderCenterZ + coneDistance);
+        var backLeftCone = World.getCone(+coneDistance, +coneDistance);
         World.drawables.push(backLeftCone);
 
-        var backRightCone = World.getCone( coneDistance, 0.0, World.occluderCenterZ - coneDistance);
+        var backRightCone = World.getCone(+coneDistance, -coneDistance);
         World.drawables.push(backRightCone);
 
-        var frontRightCone = World.getCone(-coneDistance, 0.0, World.occluderCenterZ - coneDistance);
+        var frontRightCone = World.getCone(-coneDistance, -coneDistance);
         World.drawables.push(frontRightCone);
     },
 
-    getCone: function getConeFn(positionX, positionY, positionZ) {
-        var coneScale = 0.05;
+    getCone: function getConeFn(positionX, positionZ) {
+        var coneScale = 0.05 * this.firetruckLength;
 
         return new AR.Model("assets/traffic_cone.wt3", {
             scale: {
@@ -57,39 +66,37 @@ var World = {
             },
             translate: {
                 x: positionX,
-                y: positionY,
+                y: World.firetruckCenter.y,
                 z: positionZ
             },
-            rotate: {   
+            rotate: {
                 x: -90
-            }
+            },
+            onError: World.onError
         });
     },
 
     createTracker: function createTrackerFn() {
         this.targetCollectionResource = new AR.TargetCollectionResource("assets/firetruck.wto", {
+            onError: World.onError
         });
 
         this.tracker = new AR.ObjectTracker(this.targetCollectionResource, {
-            onError: function(errorMessage) {
-                alert(errorMessage);
-            }
+            onError: World.onError
         });
-        
+
         this.objectTrackable = new AR.ObjectTrackable(this.tracker, "*", {
             drawables: {
                 cam: World.drawables
             },
-            onObjectRecognized: this.objectRecognized,
-            onObjectLost: this.objectLost,
-            onError: function(errorMessage) {
-                alert(errorMessage);
-            }
+            onObjectRecognized: World.objectRecognized,
+            onObjectLost: World.objectLost,
+            onError: World.onError
         });
     },
 
     objectRecognized: function objectRecognizedFn() {
-        World.removeLoadingBar();
+        World.hideInfoBar();
         World.setAugmentationsEnabled(true);
     },
 
@@ -103,22 +110,17 @@ var World = {
         }
     },
 
-    removeLoadingBar: function removeLoadingBarFn() {
-        if (!World.loaded && World.firetruckOccluder.isLoaded()) {
-            var e = document.getElementById('loadingMessage');
-            e.parentElement.removeChild(e);
-            World.loaded = true;
-        }
+    onError: function onErrorFn(error) {
+        alert(error)
     },
 
-    loadingStep: function loadingStepFn() {
-        if (World.firetruckOccluder.isLoaded()) {
-            var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
-            var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
-            document.getElementById('loadingMessage').innerHTML =
-                "<div" + cssDivLeft + ">Scan Firetruck:</div>" +
-                "<div" + cssDivRight + "><img src='assets/firetruck_image.png'></img></div>";
-        }
+    hideInfoBar: function hideInfoBarFn() {
+        document.getElementById("infoBox").style.display = "none";
+    },
+
+    showInfoBar: function worldLoadedFn() {
+        document.getElementById("infoBox").style.display = "table";
+        document.getElementById("loadingMessage").style.display = "none";
     }
 };
 

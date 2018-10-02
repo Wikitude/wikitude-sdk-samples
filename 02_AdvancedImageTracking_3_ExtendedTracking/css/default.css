@@ -12,11 +12,25 @@
     display: table;
 }
 
-.info .text {
-    color: black;
+#infoBox {
+    display: none;
 }
 
-.info .image {
+#infoBox .text {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: right;
+    width: 50%;
+}
+
+#infoBox .icons {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+}
+
+#infoBox .icons img {
+    margin-left: 15px;
     width: 80px;
 }
 
@@ -51,4 +65,20 @@
     background-image: -moz-radial-gradient(5px 5px 5deg, circle cover, darkred 0%, red 100%, red 95%);
     background-image: -webkit-radial-gradient(5px 5px, circle cover, darkred, red);
     background-image: radial-gradient(5px 5px 5deg, circle cover, darkred 0%, red 100%, red 95%);
+}
+
+#buttonContainer {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+#stopExtendedTrackingButton {
+    padding: 20px;
+    background-color: #ffb300;
+    font-weight: bold;
+    border: none;
+    display: none;
 }

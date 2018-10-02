@@ -1,98 +1,106 @@
 var World = {
     loaded: false,
     dinoSettings: {
-        diplodocus: {scale: 0.4},
-        spinosaurus: {scale: 0.004},
-        triceratops: {scale: 0.4},
-        tyrannosaurus: {scale: 0.4}
+        diplodocus: {
+            scale: 0.4
+        },
+        spinosaurus: {
+            scale: 0.004
+        },
+        triceratops: {
+            scale: 0.4
+        },
+        tyrannosaurus: {
+            scale: 0.4
+        }
     },
 
     init: function initFn() {
         this.createOverlays();
     },
 
-    createOverlays: function () {
+    createOverlays: function createOverlaysFn() {
         /*
-         First an AR.ImageTracker needs to be created in order to start the recognition engine. It is initialized with a AR.TargetCollectionResource specific to the target collection that should be used. Optional parameters are passed as object in the last argument. In this case a callback function for the onTargetsLoaded trigger is set. Once the tracker loaded all its target images, the function worldLoaded() is called.
-
-         Important: If you replace the tracker file with your own, make sure to change the target name accordingly.
-         Use a specific target name to respond only to a certain target or use a wildcard to respond to any or a certain group of targets.
+            First a AR.TargetCollectionResource is created with the path to the Wikitude Target Collection(.wtc) file.
+            This .wtc file can be created from images using the Wikitude Studio. More information on how to create them
+            can be found in the documentation in the TargetManagement section.
+            Each target in the target collection is identified by its target name. By using this
+            target name, it is possible to create an AR.ImageTrackable for every target in the target collection.
          */
-        var targetCollectionResource = new AR.TargetCollectionResource("assets/dinosaurs.wtc");
-
-        /*
-         To enable simultaneous tracking of multiple targets 'maximumNumberOfConcurrentlyTrackableTargets' has to be defined.
-         */
-        var tracker = new AR.ImageTracker(targetCollectionResource, {
-            maximumNumberOfConcurrentlyTrackableTargets: 5, // a maximum of 5 targets can be tracked simultaneously
-            /*
-             Disables extended range recognition.
-             The reason for this is that extended range recognition requires more processing power and with multiple targets
-             the SDK is trying to recognize targets until the maximumNumberOfConcurrentlyTrackableTargets is reached and it
-             may slow down the tracking of already recognized targets.
-             */
-            extendedRangeRecognition: AR.CONST.IMAGE_RECOGNITION_RANGE_EXTENSION.OFF,
-            onTargetsLoaded: this.worldLoaded,
-            onError: function (errorMessage) {
-                alert(errorMessage);
-            }
+        this.targetCollectionResource = new AR.TargetCollectionResource("assets/dinosaurs.wtc", {
+            onError: World.onError
         });
 
         /*
-         Pre-load models such that they are available in cache to avoid any
-         initial slowdown upon first recognition.
+            This resource is then used as parameter to create an AR.ImageTracker. Optional parameters are passed as
+            object in the last argument. In this case a callback function for the onTargetsLoaded trigger is set. Once
+            the tracker loaded all of its target images this callback function is invoked. We also set the callback
+            function for the onError trigger which provides a sting containing a description of the error.
+
+            To enable simultaneous tracking of multiple targets 'maximumNumberOfConcurrentlyTrackableTargets' has
+            to be set.
+            to be set.
+         */
+        this.tracker = new AR.ImageTracker(this.targetCollectionResource, {
+            maximumNumberOfConcurrentlyTrackableTargets: 5, // a maximum of 5 targets can be tracked simultaneously
+            /*
+                Disables extended range recognition.
+                The reason for this is that extended range recognition requires more processing power and with multiple
+                targets the SDK is trying to recognize targets until the maximumNumberOfConcurrentlyTrackableTargets
+                is reached and it may slow down the tracking of already recognized targets.
+             */
+            extendedRangeRecognition: AR.CONST.IMAGE_RECOGNITION_RANGE_EXTENSION.OFF,
+            onTargetsLoaded: World.showInfoBar,
+            onError: World.onError
+        });
+
+        /*
+            Pre-load models such that they are available in cache to avoid any slowdown upon first recognition.
          */
         new AR.Model("assets/models/diplodocus.wt3");
         new AR.Model("assets/models/spinosaurus.wt3");
         new AR.Model("assets/models/triceratops.wt3");
         new AR.Model("assets/models/tyrannosaurus.wt3");
 
-        new AR.ImageTrackable(tracker, "*", {
-            onImageRecognized: function (target) {
+        /*
+            Note that this time we use "*" as target name. That means that the AR.ImageTrackable will respond to
+            any target that is defined in the target collection. You can use wildcards to specify more complex name
+            matchings. E.g. 'target_?' to reference 'target_1' through 'target_9' or 'target*' for any targets
+            names that start with 'target'.
+         */
+        this.dinoTrackable = new AR.ImageTrackable(this.tracker, "*", {
+            onImageRecognized: function(target) {
                 /*
-                 Create 3D model based on which target was recognized.
+                    Create 3D model based on which target was recognized.
                  */
                 var model = new AR.Model("assets/models/" + target.name + ".wt3", {
                     scale: World.dinoSettings[target.name].scale,
                     rotate: {
                         z: 180
-                    }
+                    },
+                    onError: World.onError
                 });
 
-                /*
-                 Adds the model as augmentation for the currently recognized target.
-                 */
+                /* Adds the model as augmentation for the currently recognized target. */
                 this.addImageTargetCamDrawables(target, model);
 
-                World.removeLoadingBar();
+                World.hideInfoBar();
             },
-            onError: function (errorMessage) {
-                alert(errorMessage);
-            }
+            onError: World.onError
         });
     },
 
-    removeLoadingBar: function () {
-        if (!World.loaded) {
-            var e = document.getElementById('loadingMessage');
-            e.parentElement.removeChild(e);
-            World.loaded = true;
-        }
+    onError: function onErrorFn(error) {
+        alert(error)
     },
 
-    worldLoaded: function worldLoadedFn() {
-        var cssDivInstructions = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
-        var cssDivTyrannosaurus = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px; width: 38px'";
-        var cssDivTriceratops = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px; width: 38px'";
-        var cssDivSpinosaurus = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px; width: 38px'";
-        var cssDivDiplodocus = " style='display: table-cell;vertical-align: middle; text-align: left; padding-right: 15px;'";
+    hideInfoBar: function hideInfoBarFn() {
+        document.getElementById("infoBox").style.display = "none";
+    },
 
-        document.getElementById('loadingMessage').innerHTML =
-            "<div" + cssDivInstructions + ">Scan one of the dinosaur targets:</div>" +
-            "<div" + cssDivTyrannosaurus + "><img src='assets/tyrannosaurus.png'></div>" +
-            "<div" + cssDivTriceratops + "><img src='assets/triceratops.png'></div>" +
-            "<div" + cssDivSpinosaurus + "><img src='assets/spinosaurus.png'></div>" +
-            "<div" + cssDivDiplodocus + "><img src='assets/diplodocus.png'></div>";
+    showInfoBar: function worldLoadedFn() {
+        document.getElementById("infoBox").style.display = "table";
+        document.getElementById("loadingMessage").style.display = "none";
     }
 };
 

@@ -2,10 +2,10 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta content="width=device-width,initial-scale=1" name="viewport">
     <!-- disables pinch-scaling of the webview, so that gestures only do what they're supposed to -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
     <title></title>
 
@@ -16,10 +16,16 @@
 </head>
 
 <body>
-    <div id="loadingMessage" class="info">Loading ...</div>
+<div id="infoBox" class="info">
+    <div class="text">Scan Target &#35;1 (surfer):</div>
+    <div class="icons">
+        <img src='assets/surfer.png'/>
+    </div>
+</div>
+<div id="loadingMessage" class="info">Loading ...</div>
 
-    <div id="snapContainer"></div>
+<div id="snapContainer"></div>
 
-    <script src="js/snappingvideo.js"></script>
+<script src="js/snappingvideo.js"></script>
 </body>
 </html>

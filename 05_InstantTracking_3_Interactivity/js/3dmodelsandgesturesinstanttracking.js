@@ -8,62 +8,84 @@ var allCurrentModels = [];
 
 var oneFingerGestureAllowed = false;
 
-// this global callback can be utilized to react on the transition from and to 2
-// finger gestures; specifically, we disallow the drag gesture in this case to ensure an
-// intuitive experience
+/*
+    This global callback can be utilized to react on the transition from and to 2 finger gestures; specifically, we
+    disallow the drag gesture in this case to ensure an intuitive experience.
+*/
 AR.context.on2FingerGestureStarted = function() {
     oneFingerGestureAllowed = false;
 };
 
 var World = {
-    modelPaths: ["assets/models/clock.wt3", "assets/models/couch.wt3", "assets/models/officechair.wt3", "assets/models/table.wt3", "assets/models/trainer.wt3"],
+
+    platformAssisstedTrackingSupported: false,
+    createOverlaysCalled: false,
+
+    modelPaths: [
+        "assets/models/clock.wt3",
+        "assets/models/couch.wt3",
+        "assets/models/officechair.wt3",
+        "assets/models/table.wt3",
+        "assets/models/trainer.wt3"
+    ],
     /*
-        requestedModel is the index of the next model to be created. This is necessary because we have to wait one frame in order to pass the correct initial position to the newly created model.
-        initialDrag is a boolean that serves the purpose of swiping the model into the scene. In the moment that the model is created, the drag event has already started and will not be caught by the model, so the motion has to be carried out by the tracking plane.
-        lastAddedModel always holds the newest model in allCurrentModels so that the plane knows which model to apply the motion to.
+        RequestedModel is the index of the next model to be created. This is necessary because we have to wait one
+        frame in order to pass the correct initial position to the newly created model. InitialDrag is a boolean
+        that serves the purpose of swiping the model into the scene. In the moment that the model is created, the
+        drag event has already started and will not be caught by the model, so the motion has to be carried out by
+        the tracking plane. LastAddedModel always holds the newest model in allCurrentModels so that the plane knows
+         which model to apply the motion to.
     */
     requestedModel: -1,
     initialDrag: false,
     lastAddedModel: null,
 
     init: function initFn() {
-        var message;
-        if (AR.hardware.smart.platformAssistedTrackingSupported) {
-            message = "Running with platform assisted tracking(ARKit or ARCore). <br> Move your phone around until the crosshair turns green, which is when you can start tracking."
-        } else {
-            message = "Running without platform assisted tracking (ARKit or ARCore)."
-        }
-
-        this.showUserInstructions(message);
-        this.createOverlays();
+        /*
+            When you'd like to make use of the SMART feature, make sure to call this function and await the result
+            in the AR.hardware.smart.onPlatformAssistedTrackingAvailabilityChanged callback.
+         */
+        AR.hardware.smart.isPlatformAssistedTrackingSupported();
     },
 
     createOverlays: function createOverlaysFn() {
-        var crossHairsRedImage = new AR.ImageResource("assets/crosshairs_red.png");
+        if (World.createOverlaysCalled) {
+            return;
+        }
+
+        World.createOverlaysCalled = true;
+
+        var crossHairsRedImage = new AR.ImageResource("assets/crosshairs_red.png", {
+            onError: World.onError
+        });
         this.crossHairsRedDrawable = new AR.ImageDrawable(crossHairsRedImage, 1.0);
 
-        var crossHairsBlueImage = new AR.ImageResource("assets/crosshairs_blue.png");
+        var crossHairsBlueImage = new AR.ImageResource("assets/crosshairs_blue.png", {
+            onError: World.onError
+        });
         this.crossHairsBlueDrawable = new AR.ImageDrawable(crossHairsBlueImage, 1.0);
 
-        var crossHairsGreenImage = new AR.ImageResource("assets/crosshairs_green.png");
+        var crossHairsGreenImage = new AR.ImageResource("assets/crosshairs_green.png", {
+            onError: World.onError
+        });
         this.crossHairsGreenDrawable = new AR.ImageDrawable(crossHairsGreenImage, 1.0);
 
         this.tracker = new AR.InstantTracker({
-            onChangedState:  function onChangedStateFn(state) {
+            onChangedState: function onChangedStateFn(state) {
                 var els = [].slice.apply(document.getElementsByClassName("model-button"));
                 if (state === AR.InstantTrackerState.INITIALIZING) {
-                    els.forEach(function (element) {
+                    els.forEach(function(element) {
                         element.classList.add("image-button-inactive");
                     });
 
                     document.getElementById("tracking-start-stop-button").src = "assets/buttons/start.png";
                     document.getElementById("tracking-height-slider-container").style.visibility = "visible";
                 } else {
-                    if (AR.hardware.smart.platformAssistedTrackingSupported) {
+                    if (World.platformAssisstedTrackingSupported) {
                         World.showUserInstructions("Running with platform assisted tracking(ARKit or ARCore).");
                     }
 
-                    els.forEach(function (element) {
+                    els.forEach(function(element) {
                         element.classList.remove("image-button-inactive");
                     });
 
@@ -72,12 +94,8 @@ var World = {
                 }
             },
             deviceHeight: 1.0,
-            onError: function(errorMessage) {
-                alert(errorMessage);
-            },
-            onChangeStateError: function(e) {
-                alert("" + e.id + " " + e.message);
-            }
+            onError: World.onError,
+            onChangeStateError: World.onError
         });
 
         this.instantTrackable = new AR.InstantTrackable(this.tracker, {
@@ -86,13 +104,13 @@ var World = {
                 initialization: World.crossHairsRedDrawable
             },
             onTrackingStarted: function onTrackingStartedFn() {
-                // do something when tracking is started (recognized)
+                /* Do something when tracking is started (recognized). */
             },
             onTrackingStopped: function onTrackingStoppedFn() {
-                // do something when tracking is stopped (lost)
+                /* Do something when tracking is stopped (lost). */
             },
             onTrackingPlaneClick: function onTrackingPlaneClickFn(xPos, yPos) {
-                // react to a the tracking plane being clicked here
+                /* React to a the tracking plane being clicked here. */
             },
             onTrackingPlaneDragBegan: function onTrackingPlaneDragBeganFn(xPos, yPos) {
                 oneFingerGestureAllowed = true;
@@ -105,9 +123,7 @@ var World = {
                 World.updatePlaneDrag(xPos, yPos);
                 World.initialDrag = false;
             },
-            onError: function(errorMessage) {
-                alert(errorMessage);
-            }
+            onError: World.onError
         });
 
         setInterval(
@@ -125,19 +141,19 @@ var World = {
     },
 
     setupEventListeners: function setupEventListenersFn() {
-        document.getElementById("tracking-model-button-clock").addEventListener('touchstart', function(ev){
+        document.getElementById("tracking-model-button-clock").addEventListener('touchstart', function( /*ev*/ ) {
             World.requestedModel = 0;
         }, false);
-        document.getElementById("tracking-model-button-couch").addEventListener('touchstart', function(ev){
+        document.getElementById("tracking-model-button-couch").addEventListener('touchstart', function( /*ev*/ ) {
             World.requestedModel = 1;
         }, false);
-        document.getElementById("tracking-model-button-chair").addEventListener('touchstart', function(ev){
+        document.getElementById("tracking-model-button-chair").addEventListener('touchstart', function( /*ev*/ ) {
             World.requestedModel = 2;
         }, false);
-        document.getElementById("tracking-model-button-table").addEventListener('touchstart', function(ev){
+        document.getElementById("tracking-model-button-table").addEventListener('touchstart', function( /*ev*/ ) {
             World.requestedModel = 3;
         }, false);
-        document.getElementById("tracking-model-button-trainer").addEventListener('touchstart', function(ev){
+        document.getElementById("tracking-model-button-trainer").addEventListener('touchstart', function( /*ev*/ ) {
             World.requestedModel = 4;
         }, false);
     },
@@ -150,7 +166,10 @@ var World = {
         }
 
         if (World.initialDrag && oneFingerGestureAllowed) {
-            lastAddedModel.translate = {x:xPos, y:yPos};
+            World.lastAddedModel.translate = {
+                x: xPos,
+                y: yPos
+            };
         }
     },
 
@@ -182,49 +201,58 @@ var World = {
                     x: xpos,
                     y: ypos
                 },
-                // We recommend only implementing the callbacks actually needed as they will
-                // cause calls from native to JavaScript being invoked. Especially for the
-                // frequently called changed callbacks this should be avoided. In this
-                // sample all callbacks are implemented simply for demonstrative purposes.
-                onDragBegan: function(x, y) {
+                /*
+                    We recommend only implementing the callbacks actually needed as they will cause calls from
+                    native to JavaScript being invoked. Especially for the frequently called changed callbacks this
+                    should be avoided. In this sample all callbacks are implemented simply for demonstrative purposes.
+                */
+                onDragBegan: function( /*x, y*/ ) {
                     oneFingerGestureAllowed = true;
                 },
                 onDragChanged: function(relativeX, relativeY, intersectionX, intersectionY) {
                     if (oneFingerGestureAllowed) {
-                        // We recommend setting the entire translate property rather than
-                        // its individual components as the latter would cause several
-                        // call to native, which can potentially lead to performance
-                        // issues on older devices. The same applied to the rotate and
-                        // scale property
-                        this.translate = {x:intersectionX, y:intersectionY};
+                        /*
+                            We recommend setting the entire translate property rather than its individual components
+                            as the latter would cause several call to native, which can potentially lead to performance
+                            issues on older devices. The same applied to the rotate and scale property.
+                        */
+                        this.translate = {
+                            x: intersectionX,
+                            y: intersectionY
+                        };
                     }
                 },
                 onDragEnded: function(x, y) {
-                    // react to the drag gesture ending
+                    /* React to the drag gesture ending. */
                 },
                 onRotationBegan: function(angleInDegrees) {
-                    // react to the rotation gesture beginning
+                    /* React to the rotation gesture beginning. */
                 },
                 onRotationChanged: function(angleInDegrees) {
                     this.rotate.z = rotationValues[modelIndex] - angleInDegrees;
                 },
-                onRotationEnded: function(angleInDegrees) {
-                   rotationValues[modelIndex] = this.rotate.z
+                onRotationEnded: function( /*angleInDegrees*/ ) {
+                    rotationValues[modelIndex] = this.rotate.z
                 },
                 onScaleBegan: function(scale) {
-                    // react to the scale gesture beginning
+                    /* React to the scale gesture beginning. */
                 },
                 onScaleChanged: function(scale) {
                     var scaleValue = scaleValues[modelIndex] * scale;
-                    this.scale = {x: scaleValue, y: scaleValue, z: scaleValue};
+                    this.scale = {
+                        x: scaleValue,
+                        y: scaleValue,
+                        z: scaleValue
+                    };
                 },
-                onScaleEnded: function(scale) {
+                onScaleEnded: function( /*scale*/ ) {
                     scaleValues[modelIndex] = this.scale.x;
-                }
+                },
+                onError: World.onError
             });
 
             allCurrentModels.push(model);
-            lastAddedModel = model;
+            World.lastAddedModel = model;
             this.instantTrackable.drawables.addCamDrawable(model);
         }
     },
@@ -251,9 +279,42 @@ var World = {
         scaleValues = [];
     },
 
+    onError: function onErrorFn(error) {
+        alert(error)
+    },
+
     showUserInstructions: function showUserInstructionsFn(message) {
-        document.getElementById('loadingMessage').innerHTML =
-            "<div style='display: table-cell; text-align: center; width: 100%;'>" + message + "</div>";
+        document.getElementById('loadingMessage').innerHTML = message;
+    }
+};
+
+AR.hardware.smart.onPlatformAssistedTrackingAvailabilityChanged = function(availability) {
+    switch (availability) {
+        case AR.hardware.smart.SmartAvailability.INDETERMINATE_QUERY_FAILED:
+            /* Query failed for some reason; try again or accept the fact. */
+            World.showUserInstructions("Could not determine if platform assisted tracking is supported.<br>" +
+                "Running without platform assisted tracking (ARKit or ARCore).");
+            World.createOverlays();
+            break;
+        case AR.hardware.smart.SmartAvailability.CHECKING_QUERY_ONGOING:
+            /* Query currently ongoing; be patient and do nothing or inform the user about the ongoing process. */
+            break;
+        case AR.hardware.smart.SmartAvailability.UNSUPPORTED:
+            /* Not supported, create the scene now without platform assisted tracking enabled. */
+            World.showUserInstructions("Running without platform assisted tracking (ARKit or ARCore).");
+            World.createOverlays();
+            break;
+        case AR.hardware.smart.SmartAvailability.SUPPORTED_UPDATE_REQUIRED:
+        case AR.hardware.smart.SmartAvailability.SUPPORTED:
+            /*
+                Supported, create the scene now with platform assisted tracking enabled SUPPORTED_UPDATE_REQUIRED
+                may be followed by SUPPORTED, make sure not to create the scene twice (see check in createOverlays).
+             */
+            World.platformAssisstedTrackingSupported = true;
+            World.showUserInstructions("Running with platform assisted tracking(ARKit or ARCore). <br> " +
+                "Move your phone around until the crosshair turns green, which is when you can start tracking.");
+            World.createOverlays();
+            break;
     }
 };
 

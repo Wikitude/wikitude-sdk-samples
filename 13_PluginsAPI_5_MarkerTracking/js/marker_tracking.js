@@ -1,53 +1,46 @@
 var World = {
-    _myPositionable: null,
 
     init: function initFn() {
         this.createOverlays();
     },
 
     createOverlays: function createOverlaysFn() {
-        var myModel = new AR.Model(
+        var carModel = new AR.Model(
             "assets/car.wt3", {
-                onLoaded: this.loadingStep,
-                    scale: {
-                        x: 0.01,
-                        y: 0.01,
-                        z: 0.01
-                    },
-                    translate: {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0
-                    },
-                    rotate: {
-                        x: 0,
-                        y: 0,
-                        z: 0
-                    }
+                onLoaded: World.showInfoBar,
+                onError: World.onError,
+                scale: {
+                    x: 0.01,
+                    y: 0.01,
+                    z: 0.01
+                },
+                translate: {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0
+                },
+                rotate: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                }
             });
-        
-        // var myImageResource = new AR.ImageResource("assets/helmet.png");
-        
-        // var myImageDrawable = new AR.ImageDrawable(myImageResource, 1, {
-        //                                      offsetX: 0,
-        //                                      offsetY: 0
-        //                                      });
 
-        World._myPositionable = new AR.Positionable("myPositionable", {
+        World.positionable = new AR.Positionable("myPositionable", {
             drawables: {
-                cam: myModel
-                //cam: myImageDrawable
+                cam: carModel
             }
         });
     },
 
-    loadingStep: function loadingStepFn() {
-  			var cssDivLeft = " style='display: table-cell;vertical-align: middle; text-align: right; width: 50%; padding-right: 15px;'";
-  			var cssDivRight = " style='display: table-cell;vertical-align: middle; text-align: left;'";
-  			document.getElementById('loadingMessage').innerHTML =
-  				"<div" + cssDivLeft + ">Scan ArUco Marker target:</div>" +
-  				"<div" + cssDivRight + "><img src='assets/aruco_marker.png'></img></div>";
-  	}
+    onError: function onErrorFn(error) {
+        alert(error)
+    },
+
+    showInfoBar: function worldLoadedFn() {
+        document.getElementById("infoBox").style.display = "table";
+        document.getElementById("loadingMessage").style.display = "none";
+    }
 };
 
 World.init();

@@ -6,16 +6,16 @@
     <meta http-equiv="Content-Type" content="application/json; charset=utf-8">
     <meta content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" name="viewport">
 
-	<title></title>
+    <title></title>
 
-	<script src="https://www.wikitude.com/libs/architect.js"></script>
-	<script type="text/javascript" src="../ade.js"></script>
+    <script src="https://www.wikitude.com/libs/architect.js"></script>
+    <script type="text/javascript" src="../ade.js"></script>
 
 
-	<!-- jquery mobile CSS -->
-    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css" />
+    <!-- jquery mobile CSS -->
+    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css"/>
     <!-- required to set background transparent & enable "click through" -->
-    <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css" />
+    <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css"/>
 
     <!-- jquery JS files -->
     <script type="text/javascript" src="jquery/jquery-1.9.1.min.js"></script>
@@ -26,9 +26,19 @@
 </head>
 
 <body>
-     <div data-role="page" id="page1" style="background: none;" >
-        <div id="loadingMessage" class="info">Loading ...</div>
+<div data-role="page" id="page1" style="background: none;">
+    <div id="infoBox" class="info">
+        <div class="text">Scan:</div>
+        <div class="icons">
+            <img src='assets/austria.jpg'/>
+            <img src='assets/brazil.jpg'/>
+            <img src='assets/france.jpg'/>
+            <img src='assets/germany.jpg'/>
+            <img src='assets/italy.jpg'/>
+        </div>
     </div>
-	<script src="js/usingmetainformationintheresponse.js"></script>
+    <div id="loadingMessage" class="info">Loading ...</div>
+</div>
+<script src="js/usingmetainformationintheresponse.js"></script>
 </body>
 </html>
