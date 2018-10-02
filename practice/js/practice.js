@@ -8,9 +8,9 @@ GeoOccluders.setupScene = function(lat, lon, alt) {
 
 const model = new AR.Model("assets/14.wt3", {
   scale: {
-    x: 1,
-    y: 1,
-    z: 1
+    x: 0,002257,
+    y: 0,002257,
+    z: 0,002257
   },
   translate: {
     x: 0.0,
