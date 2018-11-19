@@ -308,11 +308,9 @@ var World = {
     },
 
     resetModels: function resetModelsFn() {
-        for (var i = 0; i < allCurrentModels.length; i++) {
-            this.instantTrackable.drawables.removeCamDrawable(allCurrentModels[i]);
-            this.instantTrackable.drawables.removeCamDrawable(allCurrentCircles);
+        this.instantTrackable.drawables.removeCamDrawable(allCurrentModels);
+        this.instantTrackable.drawables.removeCamDrawable(allCurrentCircles);
 
-        }
         allCurrentModels = [];
         allCurrentCircles = [];
         World.resetAllModelValues();

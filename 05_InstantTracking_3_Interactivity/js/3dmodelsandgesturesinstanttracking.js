@@ -267,9 +267,8 @@ var World = {
     },
 
     resetModels: function resetModelsFn() {
-        for (var i = 0; i < allCurrentModels.length; i++) {
-            this.instantTrackable.drawables.removeCamDrawable(allCurrentModels[i]);
-        }
+        this.instantTrackable.drawables.removeCamDrawable(allCurrentModels);
+
         allCurrentModels = [];
         World.resetAllModelValues();
     },

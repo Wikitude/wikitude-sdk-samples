@@ -1,7 +1,5 @@
 var defaultScaleValue = 0.5;
 
-var previousDragValueX = [];
-var previousDragValueY = [];
 var previousRotationValue = [];
 var previousScaleValue = [];
 
@@ -65,8 +63,6 @@ var World = {
     initPositionValues: function() {
         var numberOfOverlays = this.paths.length;
 
-        previousDragValueX = World.fillArray(0.0, numberOfOverlays);
-        previousDragValueY = World.fillArray(0.0, numberOfOverlays);
         previousRotationValue = World.fillArray(0.0, numberOfOverlays);
         previousScaleValue = World.fillArray(defaultScaleValue, numberOfOverlays);
     },
@@ -101,20 +97,17 @@ var World = {
 
                 return true;
             },
-            onDragChanged: function(x, y) {
+            onDragChanged: function(x, y, intersectionX, intersectionY) {
                 if (oneFingerGestureAllowed) {
                     this.translate = {
-                        x: previousDragValueX[index] + x,
-                        y: previousDragValueY[index] - y
+                        x: intersectionX,
+                        y: intersectionY
                     };
                 }
 
                 return true;
             },
             onDragEnded: function( /*x, y*/ ) {
-                previousDragValueX[index] = this.translate.x;
-                previousDragValueY[index] = this.translate.y;
-
                 return true;
             },
             onRotationBegan: function( /*angleInDegrees*/ ) {
