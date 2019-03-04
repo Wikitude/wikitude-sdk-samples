@@ -2,6 +2,24 @@ var World = {
 
     init: function initFn() {
         this.createOverlays();
+
+        /*
+            Plugin specific API availability depends on the timing with which they are registered.
+            To make sure a plugin specific API is available, this observer function can be used.
+         */
+        AR.plugins.addPluginAvailabilityObserver(function(pluginId) {
+            if (pluginId === "com.wikitude.plugins.barcode_scanner_demo") {
+                var barcodeScanner = new BarcodeScanner({
+                    onBarcodeRecognized: function(barcode) {
+                        document.getElementById('infoBox').innerHTML = 'Code Content: ' + barcode;
+                        document.getElementById('infoBox').style.display = 'table';
+                    },
+                    onBarcodeLost: function() {
+                        document.getElementById('infoBox').style.display = 'none';
+                    }
+                });
+            }
+        });
     },
 
     createOverlays: function createOverlaysFn() {

@@ -2,6 +2,20 @@ var World = {
 
     init: function initFn() {
         this.createOverlays();
+
+        /*
+            Plugin specific API availability depends on the timing with which they are registered.
+            To make sure a plugin specific API is available, this observer function can be used.
+         */
+        AR.plugins.addPluginAvailabilityObserver(function(pluginId) {
+            if (pluginId === "com.wikitude.plugins.face_tracker_demo") {
+                var faceTracker = new FaceTracker("assets/high_database.xml", {
+                    onError: function(error) {
+                        alert(error.message);
+                    }
+                });
+            }
+        });
     },
 
     createOverlays: function createOverlaysFn() {

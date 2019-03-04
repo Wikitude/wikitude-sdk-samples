@@ -230,6 +230,9 @@ var World = {
         $("#panel-distance-places").html((placesInRange != 1) ?
             (placesInRange + " Places") : (placesInRange + " Place"));
 
+        World.updateStatusMessage((placesInRange != 1) ?
+            (placesInRange + " places loaded") : (placesInRange + " place loaded"));
+
         /* Update culling distance, so only places within given range are rendered. */
         AR.context.scene.cullingDistance = Math.max(maxRangeMeters, 1);
 
