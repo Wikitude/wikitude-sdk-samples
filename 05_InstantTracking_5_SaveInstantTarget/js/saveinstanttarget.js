@@ -300,7 +300,7 @@ var World = {
     },
 
     onError: function onErrorFn(error) {
-        alert(error)
+        alert(error);
     },
 
     showUserInstructions: function showUserInstructionsFn(message) {

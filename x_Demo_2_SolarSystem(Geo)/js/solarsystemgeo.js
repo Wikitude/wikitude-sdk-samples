@@ -272,6 +272,10 @@ var Solar = {
         cicularAnimationGroup.start(-1);
     },
 
+    onError: function onErrorFn(error) {
+        alert(error);
+    },
+
     planetClicked: function(planet) {
         return function() {
             document.getElementById("info").setAttribute("class", "info");

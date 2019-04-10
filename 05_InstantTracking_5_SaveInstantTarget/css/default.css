@@ -60,6 +60,10 @@ body {
     width: 14%;
 }
 
+.image-button-inactive {
+    opacity: 0.1;
+}
+
 @media only screen
 and (min-device-width: 640px)
 and (orientation: portrait) {

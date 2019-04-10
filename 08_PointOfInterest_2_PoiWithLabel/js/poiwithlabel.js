@@ -69,7 +69,7 @@ var World = {
     },
 
     onError: function onErrorFn(error) {
-        alert(error)
+        alert(error);
     }
 };
 

@@ -111,7 +111,7 @@ var World = {
     },
 
     onError: function onErrorFn(error) {
-        alert(error)
+        alert(error);
     },
 
     hideInfoBar: function hideInfoBarFn() {

@@ -80,7 +80,7 @@ var World = {
     },
 
     onError: function onErrorFn(error) {
-        alert(error)
+        alert(error);
     },
 
     showInfoBar: function worldLoadedFn() {

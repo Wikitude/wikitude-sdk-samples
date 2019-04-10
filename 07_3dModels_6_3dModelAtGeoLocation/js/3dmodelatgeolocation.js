@@ -40,6 +40,10 @@ var World = {
         });
     },
 
+    onError: function onErrorFn(error) {
+        alert(error);
+    },
+
     worldLoaded: function worldLoadedFn() {
         document.getElementById("loadingMessage").style.display = "none";
     }
