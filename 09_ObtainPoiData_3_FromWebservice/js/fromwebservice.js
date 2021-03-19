@@ -65,15 +65,8 @@ var World = {
 
     /* Updates status message shown in small "i"-button aligned bottom center. */
     updateStatusMessage: function updateStatusMessageFn(message, isWarning) {
-
-        var themeToUse = isWarning ? "e" : "c";
-        var iconToUse = isWarning ? "alert" : "info";
-
-        $("#status-message").html(message);
-        $("#popupInfoButton").buttonMarkup({
-            theme: themeToUse,
-            icon: iconToUse
-        });
+        document.getElementById("popupButtonImage").src = isWarning ? "assets/warning_icon.png" : "assets/info_icon.png";
+        document.getElementById("popupButtonTooltip").innerHTML = message;
     },
 
     /*
@@ -115,7 +108,7 @@ var World = {
     },
 
     /*
-        JQuery provides a number of tools to load data from a remote origin.
+        JavaScript provides a number of tools to load data from a remote origin.
         It is highly recommended to use the JSON format for POI information. Requesting and parsing is done in a
         few lines of code.
         Use e.g. 'AR.context.onLocationChanged = World.locationChanged;' to define the method invoked on location
@@ -140,16 +133,22 @@ var World = {
             lat + "&" + ServerInformation.POIDATA_SERVER_ARG_LON + "=" +
             lon + "&" + ServerInformation.POIDATA_SERVER_ARG_NR_POIS + "=20";
 
-        var jqxhr = $.getJSON(serverUrl, function(data) {
-                World.loadPoisFromJsonData(data);
-            })
-            .error(function(err) {
+        /* Use GET request to fetch the JSON data from the server */
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', serverUrl, true);
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+            var status = xhr.status;
+            if (status === 200) {
+                World.loadPoisFromJsonData(xhr.response);
+                World.isRequestingData = false;
+            }
+            else {
                 World.updateStatusMessage("Invalid web-service response.", true);
                 World.isRequestingData = false;
-            })
-            .complete(function() {
-                World.isRequestingData = false;
-            });
+            }
+        }
+        xhr.send();
     },
 
     onError: function onErrorFn(error) {

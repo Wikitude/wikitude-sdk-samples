@@ -1,16 +1,8 @@
-#page1 {
-    position: absolute;
-    right: 0;
-    top: 0;
-    left: 0;
-    bottom: 0;
-}
-
 .info {
     font-size: large;
     position: absolute;
     width: 100%;
-    padding-top: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     padding-bottom: 12px;
     background-color: #BBBBBB;
     text-align: center;
@@ -42,17 +34,42 @@
 }
 
 #scanButtonWrapper {
-    font-size: large;
     position: absolute;
     width: 100%;
     padding-top: 12px;
-    padding-bottom: 12px;
-    background-color: #BBBBBB;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    background-color: rgba(187, 187, 187, 0.7);
     text-align: center;
+    vertical-align: middle;
     bottom: 0;
     left: 0;
-    opacity: 0.7;
     display: table;
+}
+
+#scanButton {
+    font-size: large;
+    background-color: #fff;
+}
+
+#scanButton:active {
+    opacity: 0.5;
+}
+
+#scanButton:focus{
+    outline: none;
+}
+
+@media screen and (orientation: portrait) {
+    #scanButton {
+        width: 15vh;
+        height: 5vh;
+    }
+}
+@media screen and (orientation: landscape) {
+    #scanButton {
+        width: 15vw;
+        height: 5vw;
+    }
 }
 
 .errorMessage {

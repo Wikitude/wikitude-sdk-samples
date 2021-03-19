@@ -2,16 +2,16 @@
 
 .radarContainer_left {
     position: absolute;
-    top: 35px;
-    left: 0px;
+    top: calc(35px + env(safe-area-inset-top));
+    left: env(safe-area-inset-left);
     width: 100px;
     height: 100px;
 }
 
 .radarContainer_right {
     position: absolute;
-    top: 35px;
-    right: 0px;
+    top: calc(35px + env(safe-area-inset-top));
+    right: env(safe-area-inset-right);
     width: 100px;
     height: 100px;
 }

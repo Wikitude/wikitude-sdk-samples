@@ -163,6 +163,7 @@ var World = {
             document.getElementById("overlayPicker").className = "overlayPicker";
 
             World.hideInfoBar();
+            World.showPicker();
         }
     },
 
@@ -254,6 +255,10 @@ var World = {
     showInfoBar: function worldLoadedFn() {
         document.getElementById("infoBox").style.display = "table";
         document.getElementById("loadingMessage").style.display = "none";
+    },
+
+    showPicker: function showPickerFn() {
+        document.getElementById("overlayPicker").style.display = "block";
     }
 };
 

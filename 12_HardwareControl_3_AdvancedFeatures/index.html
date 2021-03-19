@@ -4,7 +4,8 @@
     <!--  basic meta information -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Type" content="application/json; charset=utf-8">
-    <meta content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" name="viewport">
+    <!-- disables pinch-scaling of the webview, so that gestures only do what they're supposed to -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 
     <title>My ARchitect World</title>
 
@@ -14,121 +15,79 @@
     <!-- important for static POI loading - include the static data  -->
     <script type="text/javascript" src="js/myJsonData.js"></script>
 
-
-    <!-- jquery mobile CSS -->
-    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css"/>
-    <!-- required to set background transparent & enable "click through" -->
-    <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css"/>
-
-    <!-- jquery JS files -->
-    <script type="text/javascript" src="jquery/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="jquery/jquery.mobile-1.3.2.min.js"></script>
-
     <!-- marker representation-->
     <script type="text/javascript" src="js/marker.js"></script>
 
     <!-- World logic-->
     <script type="text/javascript" src="js/hwFeatures.js"></script>
+
+    <link rel="stylesheet" href="css/default.css">
 </head>
 
 <body>
-<div data-role="page" id="page1" style="background: none;">
-    <!-- header of UI holding feature buttons -->
-    <div id="header-status" data-role="header" data-position="fixed" data-theme="c">
-        <a href="javascript: World.showCamInfo();" data-icon="info" data-inline="true" data-mini="true">Camera Info</a>
-        <a href="javascript: World.showCamControl()" data-icon="gear">Camera Control</a>
-        <h1></h1>
+    <div id="mainHeader">
+        <button class="customButton" id="cameraInfoButton" onclick="World.showCamInfo();">Camera Info</button>
+        <button class="customButton" id="cameraControlButton" onclick="World.showCamControl();">Camera Control</button>
     </div>
 
-    <!-- PANELS, ONLY VISIBLE ON DEMAND -->
-
-    <!-- panel containing camera information -->
-    <div data-role="panel" id="panel-caminfo" data-position="left" data-display="overlay"
-         style="background-color:#F0F0F0;" data-theme="c">
-
-        <!-- header with "close" button -->
-        <div data-role="header" data-theme="c">
-            <h1>Camera Info</h1>
-            <a href="#header" data-rel="close">Close</a>
-        </div>
-
-        <!-- content of camera info page -->
-        <div data-role="content">
-
-            <!-- focus modes -->
-            <h4> Focus: <a id="camera-focus-modes"> </a></h4>
-
-            <!-- positions -->
-            <h4> Positions: <a id="camera-positions"> </a></h4>
-
-            <!-- zoom range -->
-            <h4> Zoom: 1 to <a id="camera-zoom-max"> </a></h4>
+    <div id="footer">
+        <div id="popupButton">
+            <img id="popupButtonImage" src="assets/warning_icon.png"/>
+            <span id="popupButtonTooltip">Trying to find out where you are</span>
         </div>
     </div>
 
-    <!-- camera control panel -->
-    <div data-role="panel" id="panel-control" data-position="right" data-display="overlay"
-         style="background-color:#F0F0F0;" data-theme="c">
-
-        <!-- header with close button -->
-        <div data-role="header" data-theme="c">
-            <h1>Controls</h1>
-            <a href="#header" data-rel="close">Close</a>
+    <div id="panelCameraInfo">
+        <div class="header">
+            <button class="customButton" id="closePanelCameraInfoButton" onclick="World.closePanel()">Close</button>
+            <h3 class="headerTitle">Camera Info</h3>
         </div>
+        <div class="content">
+            <h4> Positions: <a id="cameraPositions"></a></h4>
+            <h4> Zoom: 1 to <a id="cameraZoomMax"></a></h4>
+            <h4> Focus: <a id="cameraFocusModes"></a></h4>
+            <h4> Manual focus available: <a id="manualFocusAvailable"></a></h4>
+            <h4> Flashlight available: <a id="flashlightAvailable"></a></h4>
+        </div>
+    </div>
 
-        <!-- zoom information, calculated/updated in code  -->
-        <div data-role="content">
-
-            <!-- zoom level -->
-            <h4> Zoom: <a id="panel-zoom-value"></a></h4>
-
-            <!-- default slider -->
-            <input id="panel-zoom-range" type="range" data-highlight="true" name="rangeSlider" min="1" max="1"
-                   value="1" data-show-value="false" step="0.1" data-popup-enabled="false">
-
-            <!-- focus mode -->
-            <h4>
-                Autofocus:
+    <div id="panelCameraControl">
+        <div class="header">
+            <button class="customButton" id="closePanelCameraControlsButton" onclick="World.closePanel()">Close</button>
+            <h3 class="headerTitle">Controls</h3>
+        </div>
+        <div class="content">
+            <h4> Zoom: </h4>
+            <div class="sliderContainer"id="panelCameraControlZoomSliderContainer">
+                <span class="sliderValue" id="panelCameraControlZoomSliderValue"></span>
+                <input class="slider" id="panelCameraControlZoomSlider" type="range" min="1" value="1" max="2" step="0.1"
+                       oninput="World.updateRangeValues()">
+            </div>
+            <h4>Autofocus:
                 <form>
-                    <input id="continuous" type="radio" name="panel-focus-auto" value="continuous" checked><label
-                        for="continuous">Continuous</label>
-                    <input id="once" type="radio" name="panel-focus-auto" value="once"><label for="once">Once</label>
-                    <input id="off" type="radio" name="panel-focus-auto" value="off"><label for="off">Off</label>
+                    <div class="cameraControlOption">
+                        <input class="panelFocusAuto" id="continuous" type="radio" name="panel-focus-auto" value="continuous" oninput="World.updateFocusMode();" checked><label for="continuous">Continuous</label>
+                    </div>
+                    <div class="cameraControlOption">
+                        <input class="panelFocusAuto" id="once" type="radio" name="panel-focus-auto" value="once" oninput="World.updateFocusMode();"><label for="once">Once</label>
+                    </div>
+                    <div class="cameraControlOption">
+                        <input class="panelFocusAuto" id="off" type="radio" name="panel-focus-auto" value="off" oninput="World.updateFocusMode();"><label for="off">Off</label>
+                    </div>
                 </form>
             </h4>
-
-            <!-- manual focus distance level -->
-            <div id="panel-focus-distance">
-                <h4 id="panel-focus-distance-label"> Manual Focus Distance: <a id="panel-focus-distance-value"></a></h4>
-
-                <!-- default slider -->
-                <input id="panel-focus-distance-range" type="range" data-highlight="true" name="rangeSlider" min="0"
-                       max="100" value="0" data-show-value="false" step="5" data-popup-enabled="false">
+            <h4> Manual Focus Distance: </h4>
+            <div class="sliderContainer" id="panelCameraControlDistanceSliderContainer">
+                <span class="sliderValue" id="panelCameraControlDistanceSliderValue"></span>
+                <input class="slider" id="panelCameraControlDistanceSlider" type="range" min="0" value="0" max="100" step="5"
+                       oninput="World.updateFocusRangeValues()">
             </div>
-
-            <!-- flashlight -->
             <h4>
-                <input id="panel-flashlight" type="checkbox" name="flashCheckbox"><label for="panel-flashlight">
-                Flashlight</label>
+                <div class="cameraControlOption">
+                    <input id="panelFlashlight" type="checkbox" name="flashCheckbox" oninput="World.updateFlashlight();"><label for="panel-flashlight">Flashlight</label>
+                </div>
             </h4>
         </div>
     </div>
-
-    <!-- transparent footer-->
-    <div data-role="footer" class="ui-bar" data-theme="f" data-position="fixed" style="text-align:center;">
-
-        <!-- small status-button -->
-        <a style="text-align:right;" id="popupInfoButton" href="#popupInfo" data-rel="popup" data-role="button"
-           class="ui-icon-alt" data-inline="true" data-transition="pop" data-icon="alert" data-theme="e"
-           data-iconpos="notext">Log</a> </p>
-
-        <!-- popup displayed when button clicked -->
-        <div data-role="popup" id="popupInfo" class="ui-content" data-theme="e" style="max-width:350px;">
-            <p style="text-align:right;" id="status-message">Trying to find out where you are</p>
-        </div>
-
-    </div>
-
-</div>
 </body>
 </html>

@@ -43,15 +43,8 @@ var World = {
 
     /* Updates status message shown in small "i"-button aligned bottom center. */
     updateStatusMessage: function updateStatusMessageFn(message, isWarning) {
-
-        var themeToUse = isWarning ? "e" : "c";
-        var iconToUse = isWarning ? "alert" : "info";
-
-        $("#status-message").html(message);
-        $("#popupInfoButton").buttonMarkup({
-            theme: themeToUse,
-            icon: iconToUse
-        });
+        document.getElementById("popupButtonImage").src = isWarning ? "assets/warning_icon.png" : "assets/info_icon.png";
+        document.getElementById("popupButtonTooltip").innerHTML = message;
     },
 
     /* Location updates, fired every time you call architectView.setLocation() in native environment. */

@@ -53,15 +53,8 @@ var World = {
 
     /* Updates status message shown in small "i"-button aligned bottom center. */
     updateStatusMessage: function updateStatusMessageFn(message, isWarning) {
-
-        var themeToUse = isWarning ? "e" : "c";
-        var iconToUse = isWarning ? "alert" : "info";
-
-        $("#status-message").html(message);
-        $("#popupInfoButton").buttonMarkup({
-            theme: themeToUse,
-            icon: iconToUse
-        });
+        document.getElementById("popupButtonImage").src = isWarning ? "assets/warning_icon.png" : "assets/info_icon.png";
+        document.getElementById("popupButtonTooltip").innerHTML = message;
     },
 
     /* Location updates, fired every time you call architectView.setLocation() in native environment. */
@@ -89,8 +82,21 @@ var World = {
         World.currentMarker = marker;
     },
 
+    closePanel: function closePanel() {
+        /* Hide panels. */
+        document.getElementById("panelCameraInfo").style.visibility = "hidden";
+        document.getElementById("panelCameraControl").style.visibility = "hidden";
+
+        if (World.currentMarker != null) {
+            /* Deselect AR-marker when user exits detail screen div. */
+            World.currentMarker.setDeselected(World.currentMarker);
+        }
+    },
+
     /* Screen was clicked but no geo-object was hit. */
     onScreenClick: function onScreenClickFn(touchLocation) {
+        World.closePanel();
+
         if (World.currentMarker) {
             World.currentMarker.setDeselected(World.currentMarker);
         }
@@ -100,67 +106,57 @@ var World = {
 
     /* Display camera control panel. */
     showCamControl: function showCamControlFn() {
-        if (World.markerList.length > 0) {
+        World.closePanel();
 
-            $("#panel-zoom-range").attr({
-                "max": AR.hardware.camera.features.zoomRange.max,
-                "min": 1
-            });
-            /* Update labels on every range movement. */
-            $('#panel-zoom-range').change(function() {
-                World.updateRangeValues();
-            });
+        document.getElementById("panelCameraControlZoomSlider").max = AR.hardware.camera.features.zoomRange.max;
+        document.getElementById("panelCameraControlZoomSlider").min = 1;
 
-            $("input[type='radio']").click(function() {
-                World.updateFocusMode();
-            });
+        document.getElementById("panelCameraControlDistanceSlider").value = AR.hardware.camera.manualFocusDistance;
+        document.getElementById("panelCameraControlDistanceSliderValue").innerHTML = document.getElementById("panelCameraControlDistanceSlider").value;
 
-            $('#panel-focus-distance-range').change(function() {
-                World.updateFocusRangeValues();
-            });
+        World.updateRangeValues();
 
-            $('#panel-flashlight').change(function() {
-                World.updateFlashlight();
-            });
-
-            World.updateRangeValues();
-
-            /* Only display manual focus distance control if it the device supports it. */
-            if (!AR.hardware.camera.manualFocusAvailable) {
-                document.getElementById("panel-focus-distance").style.display = "none";
-            }
-
-            /* Open panel. */
-            $("#panel-control").trigger("updatelayout");
-            $("#panel-control").panel("open", 1234);
-        } else {
-
-            /* No places are visible, because the are not loaded yet. */
-            World.updateStatusMessage('No places available yet', true);
+        /* Only display manual focus distance control if it the device supports it. */
+        if (!AR.hardware.camera.manualFocusAvailable) {
+            document.getElementById("panelCameraControlDistanceSliderContainer").style.display = "none";
         }
+
+        /* Open panel. */
+        document.getElementById("panelCameraControl").style.visibility = "visible";
     },
 
     /* Display camera info panel. */
     showCamInfo: function showCamInfoFn() {
+        World.closePanel();
+
         /* Update panel values. */
         var features = AR.hardware.camera.features;
+        var camera = AR.hardware.camera;
 
-        $("#camera-focus-modes").html(features.focusModes.join());
-        $("#camera-positions").html(features.positions.join());
-        $("#camera-zoom-max").html(Math.round(features.zoomRange.max));
+        /* Remove repeated camera position elements */
+        var positions = [];
+        features.positions.forEach(function(value, index) {
+            if (!positions.includes(value)) positions.push(value);
+        })
+
+        document.getElementById("cameraPositions").innerHTML = positions.join();
+        document.getElementById("cameraZoomMax").innerHTML = Math.round(features.zoomRange.max);
+        document.getElementById("cameraFocusModes").innerHTML = features.focusModes.join();
+        document.getElementById("manualFocusAvailable").innerHTML = (camera.manualFocusAvailable) ? "Yes" : "No";
+        document.getElementById("flashlightAvailable").innerHTML = (camera.flashlightAvailable) ? "Yes" : "No";
 
         /* Show panel. */
-        $("#panel-caminfo").panel("open", 123);
+        document.getElementById("panelCameraInfo").style.visibility = "visible";
     },
 
     /* Udpates values shown in "control panel". */
     updateRangeValues: function updateRangeValuesFn() {
 
         /* Get current slider value (0..100);. */
-        var zoomValue = $("#panel-zoom-range").val();
+        var zoomValue = document.getElementById("panelCameraControlZoomSlider").value;
 
         /* Update UI labels accordingly. */
-        $("#panel-zoom-value").html(zoomValue);
+        document.getElementById("panelCameraControlZoomSliderValue").innerHTML = zoomValue;
 
         AR.hardware.camera.zoom = parseFloat(zoomValue);
     },
@@ -168,10 +164,10 @@ var World = {
     updateFocusRangeValues: function updateFocusRangeValuesFn() {
 
         /* Get current slider value (0..100);. */
-        var slider_value = $("#panel-focus-distance-range").val();
+        var slider_value = document.getElementById("panelCameraControlDistanceSlider").value;
 
         /* Update UI labels accordingly. */
-        $("#panel-focus-distance-value").html(slider_value);
+        document.getElementById("panelCameraControlDistanceSliderValue").innerHTML = slider_value;
 
         AR.hardware.camera.manualFocusDistance = parseInt(slider_value) / 100;
     },
@@ -180,7 +176,7 @@ var World = {
     updateFocusMode: function updateFocusModeFn() {
 
         /* Get current checkbox status. */
-        var radioValue = $("input[name='panel-focus-auto']:checked").val();
+        var radioValue = document.querySelector(".panelFocusAuto:checked").value;
 
         if (radioValue === "continuous") {
             AR.hardware.camera.focusMode = AR.CONST.CAMERA_FOCUS_MODE.CONTINUOUS;
@@ -195,7 +191,7 @@ var World = {
     updateFlashlight: function updateFlashlightFn() {
 
         /* Get current checkbox status. */
-        AR.hardware.camera.flashlight = $("#panel-flashlight").is(":checked");
+        AR.hardware.camera.flashlight = document.querySelector("#panelFlashlight").checked
     },
 
     /*

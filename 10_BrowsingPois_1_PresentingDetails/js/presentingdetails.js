@@ -80,15 +80,8 @@ var World = {
 
     /* Updates status message shown in small "i"-button aligned bottom center. */
     updateStatusMessage: function updateStatusMessageFn(message, isWarning) {
-
-        var themeToUse = isWarning ? "e" : "c";
-        var iconToUse = isWarning ? "alert" : "info";
-
-        $("#status-message").html(message);
-        $("#popupInfoButton").buttonMarkup({
-            theme: themeToUse,
-            icon: iconToUse
-        });
+        document.getElementById("popupButtonImage").src = isWarning ? "assets/warning_icon.png" : "assets/info_icon.png";
+        document.getElementById("popupButtonTooltip").innerHTML = message;
     },
 
     /* Location updates, fired every time you call architectView.setLocation() in native environment. */
@@ -119,6 +112,8 @@ var World = {
 
     /* Fired when user pressed maker in cam. */
     onMarkerSelected: function onMarkerSelectedFn(marker) {
+        World.closePanel();
+
         World.currentMarker = marker;
 
         /*
@@ -126,9 +121,8 @@ var World = {
             description), compare index.html in the sample's directory.
         */
         /* Update panel values. */
-        $("#poi-detail-title").html(marker.poiData.title);
-        $("#poi-detail-description").html(marker.poiData.description);
-
+        document.getElementById("poiDetailTitle").innerHTML = marker.poiData.title;
+        document.getElementById("poiDetailDescription").innerHTML = marker.poiData.description;
 
         /*
             It's ok for AR.Location subclass objects to return a distance of `undefined`. In case such a distance
@@ -147,22 +141,27 @@ var World = {
             ((marker.distanceToUser / 1000).toFixed(2) + " km") :
             (Math.round(marker.distanceToUser) + " m");
 
-        $("#poi-detail-distance").html(distanceToUserValue);
+        document.getElementById("poiDetailDistance").innerHTML = distanceToUserValue;
 
         /* Show panel. */
-        $("#panel-poidetail").panel("open", 123);
+        document.getElementById("panelPoiDetail").style.visibility = "visible";
+    },
 
-        $(".ui-panel-dismiss").unbind("mousedown");
+    closePanel: function closePanel() {
+        /* Hide panel. */
+        document.getElementById("panelPoiDetail").style.visibility = "hidden";
 
-        /* Deselect AR-marker when user exits detail screen div. */
-        $("#panel-poidetail").on("panelbeforeclose", function(event, ui) {
+        if (World.currentMarker != null) {
+            /* Deselect AR-marker when user exits detail screen div. */
             World.currentMarker.setDeselected(World.currentMarker);
-        });
+            World.currentMarker = null;
+        }
     },
 
     /* Screen was clicked but no geo-object was hit. */
     onScreenClick: function onScreenClickFn() {
         /* You may handle clicks on empty AR space too. */
+        World.closePanel();
     },
 
     /* Returns distance in meters of placemark with maxdistance * 1.1. */
@@ -182,7 +181,7 @@ var World = {
     },
 
     /*
-        JQuery provides a number of tools to load data from a remote origin.
+        JavaScript provides a number of tools to load data from a remote origin.
         It is highly recommended to use the JSON format for POI information. Requesting and parsing is done in a few lines of code.
         Use e.g. 'AR.context.onLocationChanged = World.locationChanged;' to define the method invoked on location updates.
         In this sample POI information is requested after the very first location update.
@@ -199,20 +198,26 @@ var World = {
         World.updateStatusMessage('Requesting places from web-service');
 
         /* Server-url to JSON content provider. */
-        var serverUrl = ServerInformation.POIDATA_SERVER + "?" + ServerInformation.POIDATA_SERVER_ARG_LAT + "=" +
+        var serverUrl = ServerInformation.POIDATA_SERVER + "?" +
+            ServerInformation.POIDATA_SERVER_ARG_LAT + "=" +
             lat + "&" + ServerInformation.POIDATA_SERVER_ARG_LON + "=" +
             lon + "&" + ServerInformation.POIDATA_SERVER_ARG_NR_POIS + "=20";
 
-        var jqxhr = $.getJSON(serverUrl, function(data) {
-                World.loadPoisFromJsonData(data);
-            })
-            .error(function(err) {
+        /* Use GET request to fetch the JSON data from the server */
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', serverUrl, true);
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+            var status = xhr.status;
+            if (status === 200) {
+                World.loadPoisFromJsonData(xhr.response);
+                World.isRequestingData = false;
+            } else {
                 World.updateStatusMessage("Invalid web-service response.", true);
                 World.isRequestingData = false;
-            })
-            .complete(function() {
-                World.isRequestingData = false;
-            });
+            }
+        }
+        xhr.send();
     },
 
     /* Helper to sort places by distance. */

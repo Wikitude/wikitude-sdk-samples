@@ -3,14 +3,19 @@ var World = {
     init: function initFn() {
         AR.plugins.addPluginAvailabilityObserver(function(pluginId) {
             if (pluginId === "com.wikitude.plugins.marker_tracker_demo") {
-                World.createOverlays();
+                try {
+                    World.markerTracker = new MarkerTracker();
+                    World.createOverlays();
+                } catch (e) {
+                    console.log("Error creating the MarkerTracker. This could be because of an error in the Plugin JS API set in the C++ Plugin. Another possible issue could be that your WebView does not support ECMAScript6 features.");
+                    console.log(e);
+                    alert("Error creating the MarkerTracker. See logs for more details.");
+                }
             }
         });
     },
 
     createOverlays: function createOverlaysFn() {
-
-        World.markerTracker = new MarkerTracker();
 
         var carModel = new AR.Model("assets/car.wt3", {
             onLoaded: World.showInfoBar,

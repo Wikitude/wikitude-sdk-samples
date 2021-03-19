@@ -11,8 +11,8 @@ var World = {
         y: -0.14,
         z: 0
     },
-    firetruckLength: 0.5,
-    firetruckHeight: 0.28,
+    firetruckLength: 0.33,
+    firetruckHeight: 0.2,
 
     init: function initFn() {
         World.createOccluder();
@@ -21,7 +21,7 @@ var World = {
     },
 
     createOccluder: function createOccluderFn() {
-        var occluderScale = 0.0045 * this.firetruckLength;
+        var occluderScale = 0.0065 * this.firetruckLength;
 
         this.firetruckOccluder = new AR.Occluder("assets/firetruck_occluder.wt3", {
             onLoaded: World.showInfoBar,

@@ -41,10 +41,8 @@ var World = {
     /* Called to inject new POI data. */
     loadPoisFromJsonData: function loadPoisFromJsonDataFn(poiData) {
 
-        /* Show radar & set click-listener. */
+        /* Show radar. */
         PoiRadar.show();
-        $('#radarContainer').unbind('click');
-        $("#radarContainer").click(PoiRadar.clickedRadar);
 
         /* Empty list of visible markers. */
         World.markerList = [];
@@ -80,8 +78,7 @@ var World = {
         World.updateStatusMessage(currentPlaceNr + ' places loaded');
 
         /* Set distance slider to 100%. */
-        $("#panel-distance-range").val(100);
-        $("#panel-distance-range").slider("refresh");
+        document.getElementById("panelRangeSliderValue").innerHTML = 100;
     },
 
     /*
@@ -96,15 +93,8 @@ var World = {
 
     /* Updates status message shown in small "i"-button aligned bottom center. */
     updateStatusMessage: function updateStatusMessageFn(message, isWarning) {
-
-        var themeToUse = isWarning ? "e" : "c";
-        var iconToUse = isWarning ? "alert" : "info";
-
-        $("#status-message").html(message);
-        $("#popupInfoButton").buttonMarkup({
-            theme: themeToUse,
-            icon: iconToUse
-        });
+        document.getElementById("popupButtonImage").src = isWarning ? "assets/warning_icon.png" : "assets/info_icon.png";
+        document.getElementById("popupButtonTooltip").innerHTML = message;
     },
 
     /* Location updates, fired every time you call architectView.setLocation() in native environment. */
@@ -144,6 +134,8 @@ var World = {
 
     /* Fired when user pressed maker in cam. */
     onMarkerSelected: function onMarkerSelectedFn(marker) {
+        World.closePanel();
+
         World.currentMarker = marker;
 
         /*
@@ -151,9 +143,8 @@ var World = {
             description), compare index.html in the sample's directory.
         */
         /* Update panel values. */
-        $("#poi-detail-title").html(marker.poiData.title);
-        $("#poi-detail-description").html(marker.poiData.description);
-
+        document.getElementById("poiDetailTitle").innerHTML = marker.poiData.title;
+        document.getElementById("poiDetailDescription").innerHTML = marker.poiData.description;
 
         /*
             It's ok for AR.Location subclass objects to return a distance of `undefined`. In case such a distance
@@ -172,22 +163,28 @@ var World = {
             ((marker.distanceToUser / 1000).toFixed(2) + " km") :
             (Math.round(marker.distanceToUser) + " m");
 
-        $("#poi-detail-distance").html(distanceToUserValue);
+        document.getElementById("poiDetailDistance").innerHTML = distanceToUserValue;
 
         /* Show panel. */
-        $("#panel-poidetail").panel("open", 123);
+        document.getElementById("panelPoiDetail").style.visibility = "visible";
+    },
 
-        $(".ui-panel-dismiss").unbind("mousedown");
+    closePanel: function closePanel() {
+        /* Hide panels. */
+        document.getElementById("panelPoiDetail").style.visibility = "hidden";
+        document.getElementById("panelRange").style.visibility = "hidden";
 
-        /* Deselect AR-marker when user exits detail screen div. */
-        $("#panel-poidetail").on("panelbeforeclose", function(event, ui) {
+        if (World.currentMarker != null) {
+            /* Deselect AR-marker when user exits detail screen div. */
             World.currentMarker.setDeselected(World.currentMarker);
-        });
+            World.currentMarker = null;
+        }
     },
 
     /* Screen was clicked but no geo-object was hit. */
     onScreenClick: function onScreenClickFn() {
         /* You may handle clicks on empty AR space too. */
+        World.closePanel();
     },
 
     /* Returns distance in meters of placemark with maxdistance * 1.1. */
@@ -210,7 +207,7 @@ var World = {
     updateRangeValues: function updateRangeValuesFn() {
 
         /* Get current slider value (0..100);. */
-        var slider_value = $("#panel-distance-range").val();
+        var slider_value = document.getElementById("panelRangeSlider").value;
         /* Max range relative to the maximum distance of all visible places. */
         var maxRangeMeters = Math.round(World.getMaxDistance() * (slider_value / 100));
 
@@ -223,9 +220,10 @@ var World = {
         var placesInRange = World.getNumberOfVisiblePlacesInRange(maxRangeMeters);
 
         /* Update UI labels accordingly. */
-        $("#panel-distance-value").html(maxRangeValue);
-        $("#panel-distance-places").html((placesInRange != 1) ?
-            (placesInRange + " Places") : (placesInRange + " Place"));
+        document.getElementById("panelRangeValue").innerHTML = maxRangeValue;
+        document.getElementById("panelRangePlaces").innerHTML = (placesInRange != 1) ?
+            (placesInRange + " Places") : (placesInRange + " Place");
+        document.getElementById("panelRangeSliderValue").innerHTML = slider_value;
 
         World.updateStatusMessage((placesInRange != 1) ?
             (placesInRange + " places loaded") : (placesInRange + " place loaded"));
@@ -255,35 +253,20 @@ var World = {
     },
 
     handlePanelMovements: function handlePanelMovementsFn() {
-
-        $("#panel-distance").on("panelclose", function(event, ui) {
-            $("#radarContainer").addClass("radarContainer_left");
-            $("#radarContainer").removeClass("radarContainer_right");
-            PoiRadar.updatePosition();
-        });
-
-        $("#panel-distance").on("panelopen", function(event, ui) {
-            $("#radarContainer").removeClass("radarContainer_left");
-            $("#radarContainer").addClass("radarContainer_right");
-            PoiRadar.updatePosition();
-        });
+        PoiRadar.updatePosition();
     },
 
     /* Display range slider. */
     showRange: function showRangeFn() {
         if (World.markerList.length > 0) {
+            World.closePanel();
 
             /* Update labels on every range movement. */
-            $('#panel-distance-range').change(function() {
-                World.updateRangeValues();
-            });
-
             World.updateRangeValues();
             World.handlePanelMovements();
 
             /* Open panel. */
-            $("#panel-distance").trigger("updatelayout");
-            $("#panel-distance").panel("open", 1234);
+            document.getElementById("panelRange").style.visibility = "visible";
         } else {
 
             /* No places are visible, because the are not loaded yet. */
@@ -303,16 +286,21 @@ var World = {
             lat + "&" + ServerInformation.POIDATA_SERVER_ARG_LON + "=" +
             lon + "&" + ServerInformation.POIDATA_SERVER_ARG_NR_POIS + "=20";
 
-        var jqxhr = $.getJSON(serverUrl, function(data) {
-                World.loadPoisFromJsonData(data);
-            })
-            .error(function(err) {
+        /* Use GET request to fetch the JSON data from the server */
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', serverUrl, true);
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+            var status = xhr.status;
+            if (status === 200) {
+                World.loadPoisFromJsonData(xhr.response);
+                World.isRequestingData = false;
+            } else {
                 World.updateStatusMessage("Invalid web-service response.", true);
                 World.isRequestingData = false;
-            })
-            .complete(function() {
-                World.isRequestingData = false;
-            });
+            }
+        }
+        xhr.send();
     },
 
     /* Helper to sort places by distance. */

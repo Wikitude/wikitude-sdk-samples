@@ -21,6 +21,7 @@ var World = {
 
     platformAssisstedTrackingSupported: false,
     createOverlaysCalled: false,
+    canStartTrackingIntervalHandle: null,
 
     modelPaths: [
         "assets/models/clock.wt3",
@@ -120,7 +121,7 @@ var World = {
                     });
 
                     document.getElementById("tracking-start-stop-button").src = "assets/buttons/start.png";
-                    document.getElementById("tracking-height-slider-container").style.visibility = "visible";
+                    document.getElementById("slider-container").style.visibility = "visible";
                 } else {
                     if (World.platformAssisstedTrackingSupported) {
                         World.showUserInstructions("Running with platform assisted tracking(ARKit or ARCore).");
@@ -131,7 +132,7 @@ var World = {
                     });
 
                     document.getElementById("tracking-start-stop-button").src = "assets/buttons/stop.png";
-                    document.getElementById("tracking-height-slider-container").style.visibility = "hidden";
+                    document.getElementById("slider-container").style.visibility = "hidden";
                 }
             },
             deviceHeight: 1.0,
@@ -148,7 +149,7 @@ var World = {
                 /* Do something when tracking is started (recognized). */
             },
             onTrackingStopped: function onTrackingStoppedFn() {
-                /* Do something when tracking is stopped (lost). */
+                World.changeTrackingHeight(this.tracker.deviceHeight);
             },
             onTrackingPlaneClick: function onTrackingPlaneClickFn(xPos, yPos) {
                 /* React to a the tracking plane being clicked here. */
@@ -167,7 +168,7 @@ var World = {
             onError: World.onError
         });
 
-        setInterval(
+        World.canStartTrackingIntervalHandle = setInterval(
             function() {
                 if (World.tracker.canStartTracking) {
                     World.instantTrackable.drawables.initialization = [World.crossHairsGreenDrawable];
@@ -215,7 +216,8 @@ var World = {
     },
 
     changeTrackerState: function changeTrackerStateFn() {
-
+        if (this.tracker.deviceHeight > 2.0) this.tracker.deviceHeight = 2.0;
+        if (this.tracker.deviceHeight < 0.1) this.tracker.deviceHeight = 0.1;
         if (this.tracker.state === AR.InstantTrackerState.INITIALIZING) {
             this.tracker.state = AR.InstantTrackerState.TRACKING;
         } else {
@@ -225,6 +227,10 @@ var World = {
 
     changeTrackingHeight: function changeTrackingHeightFn(height) {
         this.tracker.deviceHeight = parseFloat(height);
+        if (height > 2.0) height = 2.0;
+        if (height < 0.1) height = 0.1;
+        document.getElementById('height-value-text').value = height;
+        document.getElementById('tracking-height-slider').value = height;
     },
 
     addModel: function addModelFn(pathIndex, xpos, ypos) {
@@ -323,6 +329,11 @@ var World = {
 
     onError: function onErrorFn(error) {
         alert(error);
+
+        /* if license check failed, stop repeatedly calling `canStartTracking` */
+        if (error.id === 1001 && error.domain === "InstantTracking") {
+            clearInterval(World.canStartTrackingIntervalHandle);
+        }
     },
 
     showUserInstructions: function showUserInstructionsFn(message) {

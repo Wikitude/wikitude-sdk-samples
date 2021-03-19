@@ -1,14 +1,14 @@
-#page1 {
-    overflow: hidden;
-    background: none;
+html, body {
+    margin: 0;
     height: 100%;
+    overflow: hidden
 }
 
 .info {
     font-size: large;
     position: absolute;
     width: 100%;
-    padding-top: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     padding-bottom: 12px;
     background-color: #BBBBBB;
     text-align: center;
@@ -58,40 +58,71 @@
     text-shadow: none;
 }
 
+.overlayButton:active {
+    opacity: 0.5;
+}
+
+.overlayButton img {
+    height: 100%;
+}
+
 @media screen and (orientation: portrait) {
+    #overlayContainer {
+        background: none;
+        position: absolute;
+        right: 0;
+        height: 100%;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-right: calc(1vw + env(safe-area-inset-right));
+    }
 
     #overlayPicker {
-        overflow: auto;
+        display: none;
+        overflow: hidden;
         height: 100%;
-        width: 22%;
-        float: right;
+        text-align:right;
     }
 
-    #overlayPicker a {
-        width: 95%;
-        right: 0.5%;
-    }
-
-    #overlayPicker a img {
-        width: 100%;
+    .overlayButton {
+        text-align: center;
+        vertical-align: middle;
+        width: 10vh;
+        height: 10vh;
+        margin-top: 0.5vh;
+        margin-bottom: 0.5vh;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 1px 1px #000;
     }
 }
 
 @media screen and (orientation: landscape) {
+    #overlayContainer {
+        background: none;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding-bottom: calc(1vh + env(safe-area-inset-bottom));
+    }
 
     #overlayPicker {
-        width: 60%;
-        text-align: right;
-        position: absolute;
-        right: 0.5%;
-        bottom: 0.5%;
-    }
-
-    #overlayPicker a {
-        width: 20%;
-    }
-
-    #overlayPicker a img {
+        display:none;
+        text-align: center;
         width: 100%;
+    }
+
+    .overlayButton {
+        padding: 0;
+        display: inline-block;
+        text-align: center;
+        vertical-align: middle;
+        width: 10vw;
+        height: 10vw;
+        margin-left: 0.5vw;
+        margin-right: 0.5vw;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 1px 1px #000;
     }
 }

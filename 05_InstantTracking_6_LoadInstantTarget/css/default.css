@@ -2,15 +2,6 @@ body {
     margin: 0;
 }
 
-#page1 {
-    position: absolute;
-    right: 0;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    min-height: 0 !important;
-}
-
 #top-wrapper {
     position: absolute;
     right: 0;
@@ -22,7 +13,7 @@ body {
 .info {
     font-size: medium;
     width: 100%;
-    padding-top: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     padding-bottom: 12px;
     background-color: #BBBBBB;
     text-align: center;
@@ -31,6 +22,7 @@ body {
 }
 
 .image-button {
+    padding-left: env(safe-area-inset-left);
     width: 14%;
 }
 

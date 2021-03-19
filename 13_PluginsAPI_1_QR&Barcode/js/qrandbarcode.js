@@ -9,15 +9,21 @@ var World = {
          */
         AR.plugins.addPluginAvailabilityObserver(function(pluginId) {
             if (pluginId === "com.wikitude.plugins.barcode_scanner_demo") {
-                var barcodeScanner = new BarcodeScanner({
-                    onBarcodeRecognized: function(barcode) {
-                        document.getElementById('infoBox').innerHTML = 'Code Content: ' + barcode;
-                        document.getElementById('infoBox').style.display = 'table';
-                    },
-                    onBarcodeLost: function() {
-                        document.getElementById('infoBox').style.display = 'none';
-                    }
-                });
+                try {
+                    var barcodeScanner = new BarcodeScanner({
+                        onBarcodeRecognized: function(barcode) {
+                            document.getElementById('infoBox').innerHTML = 'Code Content: ' + barcode;
+                            document.getElementById('infoBox').style.display = 'table';
+                        },
+                        onBarcodeLost: function() {
+                            document.getElementById('infoBox').style.display = 'none';
+                        }
+                    });
+                } catch (e) {
+                    console.log("Error creating the BarcodeScanner. This could be because of an error in the Plugin JS API set in the C++ Plugin. Another possible issue could be that your WebView does not support ECMAScript6 features.");
+                    console.log(e);
+                    alert("Error creating the BarcodeScanner. See logs for more details.");
+                }
             }
         });
     },

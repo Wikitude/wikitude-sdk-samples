@@ -9,11 +9,17 @@ var World = {
          */
         AR.plugins.addPluginAvailabilityObserver(function(pluginId) {
             if (pluginId === "com.wikitude.plugins.face_tracker_demo") {
-                var faceTracker = new FaceTracker("assets/high_database.xml", {
-                    onError: function(error) {
-                        alert(error.message);
-                    }
-                });
+                try {
+                    var faceTracker = new FaceTracker("assets/high_database.xml", {
+                        onError: function(error) {
+                            alert(error.message);
+                        }
+                    });
+                } catch (e) {
+                    console.log("Error creating the FaceTracker. This could be because of an error in the Plugin JS API set in the C++ Plugin. Another possible issue could be that your WebView does not support ECMAScript6 features.");
+                    console.log(e);
+                    alert("Error creating the FaceTracker. See logs for more details.");
+                }
             }
         });
     },

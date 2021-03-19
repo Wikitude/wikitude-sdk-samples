@@ -2,18 +2,67 @@ body {
     margin: 0;
 }
 
-#page1 {
-    position: absolute;
-    right: 0;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    min-height: 0 !important;
+#height-value-text {
+    font-size: large;
+    text-align: center;
+    float: right;
+    box-sizing: border-box;
+    border-color: #aaa;
 }
 
 #tracking-height-slider-container {
-    max-width: 500px;
-    width: 85%;
+    display:inline-block;
+    text-align: center;
+}
+
+#slider-container {
+    display: inline-block;
+}
+
+#height-value-text-container {
+    float: left;
+    width: 20vw;
+}
+
+#trash-button-container {
+    float: right;
+    width: 20vw;
+}
+
+.image-button {
+    margin-bottom: env(safe-area-inset-bottom);
+}
+
+.image-button-inactive {
+    opacity: 0.1;
+}
+
+#tracking-height-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5vw;
+    position: relative;
+    background: none;
+    top: 50%;
+    transform: translate(0, -55%);
+    border-color: #aaa;
+}
+
+#tracking-height-slider::-webkit-slider-thumb {
+    top: 50%;
+    transform: translate(0, -30%);
+    border-color: #aaa;
+    border-radius: 100%;
+}
+
+#tracking-height-slider::-webkit-slider-thumb:active {
+    background: #ddd;
+    border-color: #287bba;
+}
+
+#tracking-height-slider::-webkit-slider-runnable-track {
+    background: #bbb;
+    border-radius: 5px;
 }
 
 #tracking-controls-container-lower {
@@ -22,19 +71,8 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    text-align: center;
-}
-
-#tracking-controls-container-lower-spacing {
-    display: inline-block;
-    width: 2%;
-    max-width: 20px;
-}
-
-.slider-delete-container {
-    padding: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
 }
 
 #top-wrapper {
@@ -48,7 +86,7 @@ body {
 .info {
     font-size: medium;
     width: 100%;
-    padding-top: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     padding-bottom: 12px;
     background-color: #BBBBBB;
     text-align: center;
@@ -56,46 +94,86 @@ body {
     display: table;
 }
 
-.image-button {
-    width: 14%;
+#tracking-controls-container-lower-spacing {
+    display: inline-block;
 }
 
-.image-button-inactive {
-    opacity: 0.1;
-}
+@media screen and (orientation: portrait) {
+    #slider-container {
+        height: 8vh;
+        margin-top: 1vh;
+    }
 
-@media only screen
-and (min-device-width: 640px)
-and (orientation: portrait) {
+    #trash-button-container {
+        height: 8vh;
+        margin-top: 1vh;
+    }
+
+    #height-value-text {
+        width: 8vh;
+        height: 8vh;
+    }
+
+    #tracking-height-slider-container {
+        width: 60vw;
+        height: 100%;
+    }
+
+    #tracking-height-slider {
+        width: 50vw;
+    }
+
+    #tracking-height-slider::-webkit-slider-thumb {
+        width: 5vh;
+        height: 5vh;
+    }
+
+    #tracking-height-slider::-webkit-slider-runnable-track {
+        height: 2vh;
+    }
+
     .image-button {
-        max-width: 100px;
-        max-height: 100px;
+        width: 16vw;
+        height: 16vw;
     }
 }
 
-@media only screen
-and (min-device-width: 720px)
-and (orientation: landscape) {
-    .image-button {
-        max-width: 100px;
-        max-height: 100px;
+@media screen and (orientation: landscape) {
+    #slider-container {
+        height: 8vw;
+        margin-top: 1vw;
     }
-}
 
-@media only screen
-and (max-device-width: 640px)
-and (orientation: portrait) {
-    .image-button {
-        max-width: 50px;
-        max-height: 50px;
+    #trash-button-container {
+        height: 8vw;
+        margin-top: 1vw;
     }
-}
 
-@media only screen
-and (max-device-width: 720px)
-and (orientation: landscape) {
+    #height-value-text {
+        width: 8vw;
+        height: 8vw;
+    }
+
+    #tracking-height-slider-container {
+        width: 60vw;
+        height: 100%;
+    }
+
+    #tracking-height-slider {
+        width: 50vw;
+    }
+
+    #tracking-height-slider::-webkit-slider-thumb {
+        width: 5vw;
+        height: 5vw;
+    }
+
+    #tracking-height-slider::-webkit-slider-runnable-track {
+        height: 2vw;
+    }
+
     .image-button {
-        max-width: 50px;
-        max-height: 50px;
+        width: 16vh;
+        height: 16vh;
     }
 }

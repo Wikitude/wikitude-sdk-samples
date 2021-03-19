@@ -5,7 +5,8 @@
     <!--  basic meta information -->
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Type" content="application/json; charset=utf-8">
-    <meta content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes" name="viewport">
+    <!-- disables pinch-scaling of the webview, so that gestures only do what they're supposed to -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 
     <title>My ARchitect World</title>
 
@@ -15,15 +16,6 @@
     <!-- positioning of poi-radar -->
     <link rel="stylesheet" href="css/poi-radar.css"/>
 
-    <!-- jquery mobile CSS -->
-    <link rel="stylesheet" href="jquery/jquery.mobile-1.3.2.min.css"/>
-    <!-- required to set background transparent & enable "click through" -->
-    <link rel="stylesheet" href="jquery/jquery-mobile-transparent-ui-overlay.css"/>
-
-    <!-- jquery JS files -->
-    <script type="text/javascript" src="jquery/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src="jquery/jquery.mobile-1.3.2.min.js"></script>
-
     <!-- marker representation-->
     <script src="js/marker.js"></script>
 
@@ -32,89 +24,51 @@
 
     <!-- radar component -->
     <script type="text/javascript" src="js/radar.js"></script>
+
+    <link rel="stylesheet" href="css/default.css"/>
 </head>
 
 <body>
-<div data-role="page" id="page1" style="background: none;">
-    <!-- MAIN PAGE CONTENT -->
-    <!-- header of UI holding feature buttons -->
-    <div id="header-status" data-role="header" data-position="fixed" data-theme="c">
-        <a href="javascript: World.showRange();" data-icon="gear" data-inline="true" data-mini="true">Range</a>
-        <a href="javascript: World.reloadPlaces()" data-icon="refresh">Reload</a>
-        <h1></h1>
+    <div id="mainHeader">
+        <button class="customButton" id="rangeButton" onclick="World.showRange();">Range</button>
+        <button class="customButton" id="refreshButton" onclick="World.reloadPlaces();">Reload</button>
     </div>
+    <div class="radarContainer_left" id="radarContainer" onclick="PoiRadar.clickedRadar()"></div>
 
-    <!-- the radar div - Wikitude SDK radar will be drawn into this div -->
-    <div class="radarContainer_left" id="radarContainer"></div>
-
-    <!-- transparent footer-->
-    <div data-role="footer" class="ui-bar" data-theme="f" data-position="fixed" style="text-align:center;">
-
-        <!-- small status-button -->
-        <a style="text-align:right;" id="popupInfoButton" href="#popupInfo" data-rel="popup" data-role="button"
-           class="ui-icon-alt" data-inline="true" data-transition="pop" data-icon="alert" data-theme="e"
-           data-iconpos="notext">Log</a> </p>
-
-        <!-- popup displayed when button clicked -->
-        <div data-role="popup" id="popupInfo" class="ui-content" data-theme="e" style="max-width:350px;">
-            <p style="text-align:right;" id="status-message">Trying to find out where you are</p>
-        </div>
-
-    </div>
-
-    <!-- PANELS, ONLY VISIBLE ON DEMAND -->
-    <!-- panel containing POI detail information -->
-    <div data-role="panel" id="panel-poidetail" data-position="right" data-display="overlay"
-         style="background-color:#F0F0F0;" data-theme="c">
-
-        <!-- header with "close" button -->
-        <div data-role="header" data-theme="c">
-            <h1>Details</h1>
-            <a href="#header" data-rel="close">Close</a>
-        </div>
-
-        <!-- content of POI detail page, you may also add thumbnails etc. here if you like -->
-        <div data-role="content">
-
-            <!-- title -->
-            <h3 id="poi-detail-title"></h3>
-
-            <!-- description -->
-            <h4 id="poi-detail-description"></h4>
-
-            <!-- distance -->
-            <h4>Distance: <a id="poi-detail-distance"></a></h4>
-
-            <!-- more button-->
-            <a href="javascript: World.onPoiDetailMoreButtonClicked();" data-role="button" data-icon="arrow-r"
-               data-iconpos="right" data-inline="true">More</a>
+    <div id="footer">
+        <div id="popupButton">
+            <img id="popupButtonImage" src="assets/warning_icon.png"/>
+            <span id="popupButtonTooltip">Trying to find out where you are</span>
         </div>
     </div>
 
-    <!-- range panel -->
-    <div data-role="panel" id="panel-distance" data-position="left" data-display="overlay"
-         style="background-color:#F0F0F0;" data-theme="c">
-
-        <!-- header with close button -->
-        <div data-role="header" data-theme="c">
-            <h1>Range</h1>
-            <a href="#header" data-rel="close">Close</a>
+    <div id="panelPoiDetail">
+        <div class="header">
+            <button class="customButton" id="closePanelPoiDetailButton" onclick="World.closePanel()">Close</button>
+            <h3 class="headerTitle">Details</h3>
         </div>
-
-        <!-- distance information, calculated/updated in code  -->
-        <div data-role="content">
-
-            <!-- Range in m/km-->
-            <h4> Range: <a id="panel-distance-value"></a></h4>
-
-            <!-- Amount of visible places -->
-            <h4> Visible: <a id="panel-distance-places"></a></h4>
-
-            <!-- default slider -->
-            <input id="panel-distance-range" type="range" data-highlight="true" name="rangeSlider" min="0" max="100"
-                   value="100" data-show-value="false" step="5" data-popup-enabled="false" readonly="readonly">
+        <div class="content">
+            <h3 id="poiDetailTitle"></h3>
+            <h4 id="poiDetailDescription"></h4>
+            <h4> Distance: <a id="poiDetailDistance"></a></h4>
+            <button class="customButton" id="#poiDetailMoreButton" onclick="World.onPoiDetailMoreButtonClicked();">More</button>
         </div>
     </div>
-</div>
+
+    <div id="panelRange">
+        <div class="header">
+            <button class="customButton" id="closePanelRangeButton" onclick="World.closePanel()">Close</button>
+            <h3 class="headerTitle">Range</h3>
+        </div>
+        <div class="content">
+            <h4> Range: <a id="panelRangeValue"></a></h4>
+            <h4> Visible: <a id="panelRangePlaces"></a></h4>
+            <div id="panelRangeSliderContainer">
+                <span id="panelRangeSliderValue"></span>
+                <input id="panelRangeSlider" type="range" min="1" value="100" max="100" step="1"
+                       oninput="World.updateRangeValues()">
+            </div>
+        </div>
+    </div>
 </body>
 </html>

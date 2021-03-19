@@ -2,7 +2,7 @@
     font-size: large;
     position: absolute;
     width: 100%;
-    padding-top: 12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
     padding-bottom: 12px;
     background-color: #BBBBBB;
     text-align: center;

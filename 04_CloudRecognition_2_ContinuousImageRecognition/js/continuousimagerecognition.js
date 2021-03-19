@@ -116,6 +116,7 @@ var World = {
     },
 
     onRecognitionError: function onRecognitionErrorFn(errorCode, errorMessage) {
+        World.cloudRecognitionService.stopContinuousRecognition();
         alert("error code: " + errorCode + " error message: " + JSON.stringify(errorMessage));
     },
 

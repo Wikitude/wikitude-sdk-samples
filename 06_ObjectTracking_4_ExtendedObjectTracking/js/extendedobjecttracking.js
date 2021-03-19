@@ -12,8 +12,8 @@ var World = {
         y: -0.14,
         z: 0
     },
-    firetruckLength: 0.5,
-    firetruckHeight: 0.28,
+    firetruckLength: 0.33,
+    firetruckHeight: 0.2,
 
     init: function initFn() {
         World.createOccluder();
@@ -24,7 +24,7 @@ var World = {
     },
 
     createOccluder: function createOccluderFn() {
-        var occluderScale = 0.0045 * this.firetruckLength;
+        var occluderScale = 0.0065 * this.firetruckLength;
 
         this.firetruckOccluder = new AR.Occluder("assets/firetruck_occluder.wt3", {
             onLoaded: World.showInfoBar,
@@ -104,7 +104,7 @@ var World = {
         this.lightsButton = new AR.Model("assets/marker.wt3", {
             translate: {
                 x: -this.firetruckLength * 0.45,
-                y: this.firetruckHeight * 0.7,
+                y: this.firetruckHeight * 0.8,
                 z: 0
             },
             rotate: {
@@ -140,9 +140,9 @@ var World = {
 
     createScrewdriver: function createScrewdriverFn() {
         var screwdriverScale = 0.04 * this.firetruckLength;
-        var screwdriverPositionX = -0.48 * this.firetruckLength;
-        var screwdriverPositionY = -0.1 * this.firetruckLength;
-        var screwdriverPositionZ = 0.40 * this.firetruckLength;
+        var screwdriverPositionX = -0.4 * this.firetruckLength;
+        var screwdriverPositionY = -0.25 * this.firetruckLength;
+        var screwdriverPositionZ = 0.50 * this.firetruckLength;
 
         this.screwdriver = new AR.Model("assets/screwdriver.wt3", {
             scale: {
